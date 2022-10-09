@@ -11,6 +11,14 @@
 
     <artifactId>minio-admin</artifactId>
 
+    <dependencies>
+        <!-- 核心模块  -->
+        <dependency>
+            <groupId>com.minio</groupId>
+            <artifactId>minio-framework</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+    </dependencies>
     <build>
         <finalName>${project.artifactId}</finalName>
         <plugins>
