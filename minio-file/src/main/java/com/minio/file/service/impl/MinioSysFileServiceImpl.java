@@ -2,6 +2,7 @@ package com.minio.file.service.impl;
 
 import com.minio.file.service.SysFileService;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @ Author     ：小问号.
@@ -9,5 +10,11 @@ import org.springframework.stereotype.Service;
  * @ Modified By：
  */
 @Service
-public class SysFileServiceImpl implements SysFileService {
+public class MinioSysFileServiceImpl implements SysFileService {
+
+
+    @Override
+    public String uploadFile(MultipartFile file) throws Exception {
+        return null;
+    }
 }
