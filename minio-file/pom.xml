@@ -18,6 +18,12 @@
             <artifactId>minio</artifactId>
             <version>${minio.version}</version>
         </dependency>
+        <!--工具模块-->
+        <dependency>
+            <groupId>com.minio</groupId>
+            <artifactId>minio-common</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>
