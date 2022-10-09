@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileController {
 
     @PostMapping("/upload")
-    public AjaxResult fileUpload(MultipartFile file) {
+    public AjaxResult uploadFile(MultipartFile file) {
         return AjaxResult.success();
     }
 }
