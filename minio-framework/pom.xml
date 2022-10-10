@@ -23,6 +23,11 @@
             <artifactId>minio-file</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <!--   aspect     -->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

@@ -1,6 +1,11 @@
 package com.minio.file.service;
 
+import com.minio.file.domain.SysFile;
+import io.minio.Result;
+import io.minio.messages.Item;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 /**
  * @ Author     ：小问号.
@@ -17,4 +22,10 @@ public interface SysFileService {
      * @throws Exception
      */
     public String uploadFile(MultipartFile file) throws Exception;
+
+    /**
+     * 查询桶下对象
+     * @return
+     */
+    List<SysFile> listObjects();
 }

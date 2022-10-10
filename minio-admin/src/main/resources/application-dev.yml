@@ -1,0 +1,5 @@
+minio:
+  endpoint: http://www.xiaowenhao.ren:9000
+  accesskey: minioadmin
+  secretkey: jganggang@!123
+  bucketName: public
