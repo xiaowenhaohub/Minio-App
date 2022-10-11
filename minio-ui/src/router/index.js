@@ -36,7 +36,7 @@ export const constantRoutes = [
             {
                 path: '/home',
                 component: (resolve) => require(['@/views/home/Home'], resolve),
-                hidden: false
+                hidden: false,
             },
         ]
     },

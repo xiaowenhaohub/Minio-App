@@ -2,7 +2,13 @@
   <div class="home">
     <div class="mi-file">
         <div class="mi-file-header">
-          <div style="flex: 1;"></div>
+          <div style="flex: 1; display: flex; justify-content: left; align-items: center;">
+            <div style="font-size: 30px; margin-left: 20px; margin-right: 15px;"><i class="el-icon-folder"></i></div>
+            <div style="font-size: 19px;margin-right: 40px;">{{folder.name}}</div>
+            <div class="mi-file-header-meta">创建时间: {{folder.createTime}}</div>
+            <div class="mi-file-header-meta">文件数量: {{folder.num}}</div>
+            <div class="mi-file-header-meta">文件夹大小: {{folder.size}} MiB</div>
+          </div>
           <div style="flex: 1;"></div>
         </div>
     </div>
@@ -11,7 +17,17 @@
 
 <script>
 export default {
-  name: "Home"
+  name: "Home",
+  data() {
+    return {
+      folder: {
+        name: 'root',
+        createTime: '2022-10-11-10:00',
+        size: 20,
+        num: 7
+      }
+    }
+  },
 }
 </script>
 
@@ -40,5 +56,11 @@ export default {
       height: 10%;
       border-bottom: #EAEDEE 1px solid;
       display: flex;
+  }
+
+  .mi-file-header-meta {
+    color: #969FA8;
+    font-size: 14px;
+    margin-right: 30px;
   }
 </style>
