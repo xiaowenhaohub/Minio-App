@@ -1,7 +1,7 @@
 <template>
-  <div class="app">
-    <Header class="header"></Header>
-    <AppMain class="main"></AppMain>
+    <div style="height: 10%">
+      <Header class="header"></Header>
+      <AppMain class="main"></AppMain>
   </div>
 </template>
 
@@ -25,16 +25,18 @@ export default {
 
   .main {
     //padding-top: 20%;
+    width: 100%;
+    height: 100%;
   }
 
   .header {
-    height: 10%;
+    height: 90%;
     width: 100%;
     left: 0;
-    position: fixed;
-    z-index: 100;
+    // position: fixed;
     box-shadow: rgb(0 0 0 / 8%) 0 3px 10px;
     min-height: 83px;
     background-color: #fff;
+
   }
 </style>

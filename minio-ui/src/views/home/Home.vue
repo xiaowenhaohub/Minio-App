@@ -14,19 +14,20 @@ export default {
 
 <style scoped>
   .home {
-    position: fixed;
+    /* position: fixed; */
+    margin-top: 2.3rem;
     height: 100%;
     width: 100%;
     background-color: #ffffff;
     display: flex;
     justify-content: center;
-    align-items: center;
+    /* align-items: center; */
     /*padding: 2rem;*/
   }
 
   .mi-file {
-    width: 95%;
-    height: 70%;
+    width: 93%;
+    height: 85%;
     border: #EAEDEE 1px solid;
     padding: 0.8rem 15px 0;
   }
