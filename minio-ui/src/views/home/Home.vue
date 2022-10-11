@@ -1,7 +1,10 @@
 <template>
   <div class="home">
     <div class="mi-file">
-        file
+        <div class="mi-file-header">
+          <div style="flex: 1;"></div>
+          <div style="flex: 1;"></div>
+        </div>
     </div>
   </div>
 </template>
@@ -26,9 +29,16 @@ export default {
   }
 
   .mi-file {
-    width: 93%;
+    width: 95%;
     height: 85%;
     border: #EAEDEE 1px solid;
-    padding: 0.8rem 15px 0;
+  }
+
+  .mi-file-header {
+      /* background-color: rebeccapurple; */
+      width: 100%;
+      height: 10%;
+      border-bottom: #EAEDEE 1px solid;
+      display: flex;
   }
 </style>
