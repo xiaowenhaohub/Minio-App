@@ -4,7 +4,7 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 /* Layout */
-// import Layout from '@/layout'
+import Layout from '@/layout'
 // import ParentView from '@/components/ParentView'
 
 /**
@@ -27,6 +27,26 @@ Vue.use(Router)
 
 // 公共路由
 export const constantRoutes = [
+
+    {
+        path: '/',
+        component: Layout,
+        redirect: 'home',
+        children:[
+            {
+                path: '/home',
+                component: (resolve) => require(['@/views/home/Home'], resolve),
+                hidden: false
+            },
+        ]
+    },
+    {
+        path: '/test',
+        component: (resolve) => require(['@/views/home/Home'], resolve),
+        name: 'Home'
+
+    },
+
     {
         path: '/404',
         component: (resolve) => require(['@/views/error/404'], resolve),
