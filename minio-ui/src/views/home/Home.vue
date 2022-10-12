@@ -21,11 +21,10 @@
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item>
                     <div style="margin-bottom:10px;">
-                      
-                      <span style="font-family: Lato, sans-serif;font-weight: 400;font-size: 1rem;line-height: 1.5;display: block;">上传文件</span>
+                      <span style="font-family: Lato, sans-serif;font-weight: 400;font-size: 1rem;line-height: 1.5;display: block;font-weight: bold;">上传文件</span>
                     </div>
                   </el-dropdown-item>
-                  <el-dropdown-item><span style="font-family: Lato, sans-serif;font-weight: 400;font-size: 1rem;line-height: 1.5;display: block;">上传文件夹</span></el-dropdown-item>
+                  <el-dropdown-item><span style="font-family: Lato, sans-serif;font-weight: 400;font-size: 1rem;line-height: 1.5;display: block;font-weight: bold;">上传文件夹</span></el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
              
