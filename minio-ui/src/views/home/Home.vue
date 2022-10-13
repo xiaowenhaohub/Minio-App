@@ -30,7 +30,7 @@
               </el-dropdown>
           </div>
         </div>
-        <div class="mi-file-body">
+        <div class="mi-file-body" :style="{width: fileBodyWidth}">
           <div class="body-header">
             <div style="display: flex;width: 98%; height: 70%;">
               <div class="body-header-left">
@@ -56,7 +56,7 @@
                 align="left"
                 min-width="3%">
                 <template slot="header" slot-scope="scope">
-                  <input class="file-check" type="checkBox"/>
+                  <input class="file-check" @click="test" type="checkBox"/>
                 </template>
                 <template slot-scope="scope">
                   <input class="file-check" type="checkBox"/>
@@ -89,8 +89,9 @@ export default {
   name: "Home",
   data() {
     return {
+      fileBodyWidth: '100%',
       folder: {
-        name: 'root',
+        name: 'public',
         createTime: '2022-10-11-10:00',
         path: 'public',
         size: 20,
@@ -121,6 +122,21 @@ export default {
       ]
     }
   },
+
+  methods: {
+    test() {
+      if (this.fileBodyWidth == '80%') {
+        this.fileBodyWidth = '100%'
+      }else {
+        this.fileBodyWidth = '80%'
+      }
+      console.log(this.fileBodyWidth)
+    }
+  },
+
+  computed: {
+
+  }
 }
 </script>
 
@@ -272,9 +288,12 @@ export default {
   }
 
   .mi-file-body {
-    width: 100%;
+    transition: width 0.5s;
+    -webkit-transition: width 0.5s;
     height: 90%;
     /* background-color: #969FA8; */
+    border-right: #EAEDEE 1px solid;
+
   }
 
   .mi-file-header {
