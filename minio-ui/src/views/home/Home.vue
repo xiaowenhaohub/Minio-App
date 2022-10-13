@@ -30,15 +30,54 @@
               </el-dropdown>
           </div>
         </div>
-
         <div class="mi-file-body">
           <div class="body-header">
             <div style="display: flex;width: 98%; height: 70%;">
               <div class="body-header-left">
+                <button class="mi-button-back">
+                  <svg style="width: 16px;min-width: 16px;" xmlns="http://www.w3.org/2000/svg" class="min-icon" fill="currentcolor" viewBox="0 0 256 256"><g id="noun_chevron_2320228" transform="translate(5.595 10) rotate(180)"><path id="Path_6842" d="M-178.01,7.8c-3.9-0.03-7.62-1.63-10.34-4.43c-5.81-5.68-5.92-15-0.25-20.81 c0.08-0.08,0.16-0.16,0.25-0.25l100.13-100.13l-100.13-100.48c-5.81-5.68-5.92-15-0.25-20.81c0.08-0.08,0.16-0.16,0.25-0.25 c5.68-5.81,15-5.92,20.81-0.25c0.08,0.08,0.16,0.16,0.25,0.25l110.82,110.82c2.8,2.72,4.39,6.44,4.43,10.34 c0.11,3.93-1.51,7.71-4.43,10.34L-167.29,2.99C-170.07,5.97-173.93,7.71-178.01,7.8z"></path></g></svg>
+                </button>
                 
+                <div class="mi-text-back">
+                  <a class="mi-file-path" href="/buckets/public/browse">{{folder.path}}</a>
+                </div>
               </div>
               <button class="body-header-button">创建新路径</button>
             </div>
+          </div>
+          <div class="body-table">
+            <el-table
+              :data="fileList"
+              style="width: 98%"
+              :header-cell-style="{fontSize:'14px',fontWeight: '700',fontFamily: 'Lato, sans-serif',color:'black'}"
+              height="100%"
+              :row-style="{height: '10px'}">
+              <el-table-column
+                align="left"
+                min-width="3%">
+                <template slot="header" slot-scope="scope">
+                  <input class="file-check" type="checkBox"/>
+                </template>
+                <template slot-scope="scope">
+                  <input class="file-check" type="checkBox"/>
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="name"
+                label="Name"
+                min-width="30%">
+              </el-table-column>
+              <el-table-column
+                prop="date"
+                label="Last Modified"
+                min-width="30%">
+              </el-table-column>
+              <el-table-column
+                prop="size"
+                label="Size"
+                min-width="10%">
+              </el-table-column>
+            </el-table>
           </div>
         </div>
     </div>
@@ -53,15 +92,118 @@ export default {
       folder: {
         name: 'root',
         createTime: '2022-10-11-10:00',
+        path: 'public',
         size: 20,
         num: 7
-      }
+      },
+      fileList: [
+      {
+          id: 1,
+          date: '2016-05-03',
+          name: '王小虎',
+          size: 200333
+        }, {
+          id: 2,
+          date: '2016-05-02',
+          name: '王小虎',
+          size: 200333
+        }, {
+          id: 3,
+          date: '2016-05-04',
+          name: '王小虎',
+          size: 200333
+        }, {
+          id: 4,
+          date: '2016-05-01',
+          name: '王小虎',
+          size: 200333
+        },
+      ]
     }
   },
 }
 </script>
 
 <style scoped>
+ 
+  .el-table {
+    font-size: 12px;
+    color: black;
+  
+  } 
+
+  .file-check {
+    width: 15px;
+    height: 15px;
+    margin: auto;
+  }
+  .body-table {
+    width: 100%;
+    height: 90%;
+    padding-left: 1%;
+  }
+
+.mi-file-path:hover {
+    text-decoration: underline;
+  }
+
+  .mi-file-path {
+    color: #969FA8;
+    font-size: 12px;
+    font-weight: bold;
+    text-decoration: none;
+  }
+  .mi-text-back {
+    width: 0;
+    display: inline-block;
+    overflow: hidden;
+    flex-grow: 1;
+    text-align: left;
+    margin-left: 15px;
+    white-space: nowrap;
+    margin-right: 10px;
+    text-overflow: ellipsis;
+  }
+
+  .mi-button-back:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+
+  .mi-button-back {
+    display: inline-flex;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    justify-content: center;
+    position: relative;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    outline: 0px;
+    margin: 0px 10px 0px 0px;
+    cursor: pointer;
+    user-select: none;
+    vertical-align: middle;
+    appearance: none;
+    text-decoration: none;
+    text-align: center;
+    flex: 0 0 auto;
+    font-size: 1.5rem;
+    padding: 8px;
+    overflow: visible;
+    color: rgba(0, 0, 0, 0.54);
+    transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    border-width: 1px 1px 1px 0px;
+    border-style: solid;
+    border-top-color: rgb(234, 237, 238);
+    border-right-color: rgb(234, 237, 238);
+    border-bottom-color: rgb(234, 237, 238);
+    border-image: initial;
+    background-color: rgb(255, 255, 255);
+    border-left-color: initial;
+    border-radius: 0px;
+    width: 38px;
+    height: 38px;
+  }
 
   .body-header-button:hover {
     background-color: rgb(230, 234, 235);
@@ -99,6 +241,9 @@ export default {
     height: 38px;
     background-color: #FCFCFD;
     margin-right: 20px;
+    display: flex;
+    justify-content: left;
+    align-items: center;
   }
 
   .body-header {
