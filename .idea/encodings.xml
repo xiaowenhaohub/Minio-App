@@ -5,8 +5,6 @@
     <file url="file://$PROJECT_DIR$/minio-admin/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/minio-common/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/minio-file/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/minio-file/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/minio-framework/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/minio-framework/src/main/resources" charset="UTF-8" />
   </component>
 </project>
