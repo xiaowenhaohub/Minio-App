@@ -14,6 +14,7 @@
         select <include refid="all_columns"></include> from sys_file_info where id = #{id}
     </select>
     <select id="selectSysFileInfoByParentDirId" resultType="com.minio.file.domain.SysFileInfo">
-        select <include refid="all_columns"></include> from sys_file_info where parent_dir_id = #{parentDirId}
+        select <include refid="all_columns"></include> from sys_file_info
+        where parent_dir_id = #{parentDirId} and status = 1
     </select>
 </mapper>

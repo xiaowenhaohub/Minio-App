@@ -23,15 +23,11 @@ logging:
     com.minio: debug
     org.springframework: warn
 
-
-# MyBatis配置
+#mybatis的相关配置
 mybatis:
-  # 搜索指定包别名
-  typeAliasesPackage: com.minio.**.domain
-  # 配置mapper的扫描，找到所有的mapper.xml映射文件
-  mapperLocations: classpath*:mapper/*Mapper.xml
-  # 加载全局的配置文件
-  configLocation: classpath:mybatis/mybatis-config.xml
+  #mapper配置文件
+  mapperLocations: classpath:mapper/**/*Mapper.xml
+  type-aliases-package: com.minio.**.domain
   #开启驼峰命名
   configuration:
     map-underscore-to-camel-case: true

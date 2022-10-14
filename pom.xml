@@ -100,6 +100,18 @@
                 <artifactId>druid-spring-boot-starter</artifactId>
                 <version>${druid.version}</version>
             </dependency>
+            <!--     Orika       -->
+            <dependency>
+                <groupId>ma.glasnost.orika</groupId>
+                <artifactId>orika-core</artifactId>
+                <version>${orika.version}</version>
+            </dependency>
+            <!--断点续传依赖-->
+            <dependency>
+                <groupId>cn.novelweb</groupId>
+                <artifactId>tool-core</artifactId>
+                <version>1.3.3</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

@@ -1,6 +1,8 @@
 package com.minio.file.service;
 
 import com.minio.file.domain.SysFile;
+import com.minio.file.domain.SysFileInfo;
+import com.minio.file.domain.vo.SysFileInfoVO;
 import io.minio.Result;
 import io.minio.messages.Item;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,7 +23,7 @@ public interface SysFileService {
      * @return 访问地址
      * @throws Exception
      */
-    public String uploadFile(MultipartFile file) throws Exception;
+    SysFileInfoVO uploadFile(MultipartFile file, Long parentDirId) throws Exception;
 
     /**
      * 查询桶下对象

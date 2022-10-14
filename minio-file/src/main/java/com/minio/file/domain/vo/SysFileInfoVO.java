@@ -1,14 +1,12 @@
-package com.minio.file.domain;
-
-import com.minio.common.domain.BaseEntity;
+package com.minio.file.domain.vo;
 
 /**
  * @author 小问号
- * @date 2022/10/14 11
+ * @date 2022/10/14 13
  * description
  */
 
-public class SysFileInfo extends BaseEntity {
+public class SysFileInfoVO {
 
     /**
      * 主键
@@ -41,19 +39,9 @@ public class SysFileInfo extends BaseEntity {
     private String size;
 
     /**
-     * 文件md5值
-     */
-    private String fileMd5;
-
-    /**
      * 文件路径
      */
     private String path;
-
-    /**
-     * 文件状态
-     */
-    private Integer status;
 
     public Long getId() {
         return id;
@@ -103,14 +91,6 @@ public class SysFileInfo extends BaseEntity {
         this.size = size;
     }
 
-    public String getFileMd5() {
-        return fileMd5;
-    }
-
-    public void setFileMd5(String fileMd5) {
-        this.fileMd5 = fileMd5;
-    }
-
     public String getPath() {
         return path;
     }
@@ -119,26 +99,16 @@ public class SysFileInfo extends BaseEntity {
         this.path = path;
     }
 
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
     @Override
     public String toString() {
-        return "SysFileInfo{" +
+        return "SysFileInfoVO{" +
                 "id=" + id +
                 ", parentDirId=" + parentDirId +
-                ", dataType='" + dataType + '\'' +
+                ", dataType=" + dataType +
                 ", fileName='" + fileName + '\'' +
                 ", ext='" + ext + '\'' +
                 ", size='" + size + '\'' +
-                ", fileMd5='" + fileMd5 + '\'' +
                 ", path='" + path + '\'' +
-                ", status=" + status +
                 '}';
     }
 }

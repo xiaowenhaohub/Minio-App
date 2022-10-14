@@ -10,10 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -34,14 +31,9 @@ public class FileController {
     @PostMapping("/upload")
     @ApiOperation("文件上传")
     @Log(title = "文件上传")
-    public AjaxResult uploadFile(MultipartFile file) {
+    public AjaxResult uploadFile(MultipartFile file, @RequestParam String parentDirId) {
         try {
-            // 上传并返回访问地址
-            String url = sysFileService.uploadFile(file);
-            SysFile sysFile = new SysFile();
-            sysFile.setName(FileUtils.getName(url));
-            sysFile.setUrl(url);
-            return AjaxResult.success(sysFile);
+            return AjaxResult.success(sysFileService.uploadFile(file, Long.valueOf(parentDirId)));
         } catch (Exception e) {
             log.error("上传文件失败", e);
             return AjaxResult.error(e.getMessage());

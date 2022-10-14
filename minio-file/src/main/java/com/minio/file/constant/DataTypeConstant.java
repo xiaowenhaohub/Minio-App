@@ -11,30 +11,10 @@ public interface DataTypeConstant {
     /**
      * 文件夹
      */
-    String DIR = "DIR";
+    Integer DIR = 1;
 
     /**
-     * 图片
+     * 文件
      */
-    String IMAGE = "IMAGE";
-
-    /**
-     * 视频
-     */
-    String VIDEO = "VIDEO";
-
-    /**
-     * 音频
-     */
-    String AUDIO = "AUDIO";
-
-    /**
-     * 文档
-     */
-    String DOC = "DOC";
-
-    /**
-     * 其他
-     */
-    String OTHER = "OTHER";
+    Integer FILE= 0;
 }
