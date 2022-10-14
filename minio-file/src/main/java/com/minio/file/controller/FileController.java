@@ -5,6 +5,8 @@ import com.minio.common.core.AjaxResult;
 import com.minio.file.domain.SysFile;
 import com.minio.file.service.SysFileService;
 import com.minio.file.utils.FileUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @RestController
 @RequestMapping("/file")
+@Api(tags = "文件操作")
 public class FileController {
 
     private static final Logger log = LoggerFactory.getLogger(FileController.class);
@@ -29,6 +32,7 @@ public class FileController {
     private SysFileService sysFileService;
 
     @PostMapping("/upload")
+    @ApiOperation("文件上传")
     @Log(title = "文件上传")
     public AjaxResult uploadFile(MultipartFile file) {
         try {

@@ -27,6 +27,7 @@
         <fastjson2.version>2.0.9</fastjson2.version>
         <minio.version>8.2.2</minio.version>
         <commons.io.version>2.11.0</commons.io.version>
+        <swagger2.version>2.9.2</swagger2.version>
 
     </properties>
 
@@ -79,6 +80,12 @@
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>${commons.io.version}</version>
+            </dependency>
+            <!--    Swagger2        -->
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>${swagger2.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
