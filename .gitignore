@@ -1,6 +1,7 @@
 # Maven
 **/target/
 #
+.idea
 ## others
 *.jar
 *.war
@@ -9,4 +10,4 @@
 *.tar.gz
 *.pid
 *.orig
-application-dey.yml
+minio-admin/src/main/resources/application-dev.yml
