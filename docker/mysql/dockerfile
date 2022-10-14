@@ -1,0 +1,5 @@
+FROM mysql:8.0
+
+MAINTAINER xiaowenhao
+
+ADD ./db/*.sql /docker-entrypoint-initdb.d/

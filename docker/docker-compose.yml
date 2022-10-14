@@ -7,7 +7,7 @@ services:
       dockerfile: dockerfile
     environment:
       - MINIO_ACCESS_KEY=minioadmin
-      - MINIO_SECRET_KEY=jganggang@!123
+      - MINIO_SECRET_KEY=password
     volumes:
     - /root/app/minio/data:/data
     - /root/app/minio/config:/root/.minio
@@ -17,3 +17,24 @@ services:
     - 9090:9090
     command: server --console-address ":9090" -address ":9000" /data
 
+  minio-mysql:
+    container_name: minio-mysql
+    image: mysql:8.0
+    build:
+      context: ./mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql/conf/:/etc/mysql/conf.d
+      - ./mysql/logs:/logs
+      - ./mysql/data:/var/lib/mysql
+    command: [
+        'mysqld',
+        '--innodb-buffer-pool-size=80M',
+        '--character-set-server=utf8mb4',
+        '--collation-server=utf8mb4_unicode_ci',
+        '--default-time-zone=+8:00',
+        '--lower-case-table-names=1'
+    ]
+    environment:
+      MYSQL_ROOT_PASSWORD: passwrod

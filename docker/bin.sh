@@ -11,16 +11,12 @@ sshkey() {
 
 send() {
 
-  echo "发送docker到$1:/app/minio......"
-  scp -r ../docker root@$1:~/app/minio/
+  echo "发送docker到$1:/home/app/minio......"
+  scp -r ../docker root@$1:/home/app/minio/
 }
 
 base(){
   docker-compose up -d minio-service
-}
-
-modules() {
-  docker-compose up -d cjxycloud-gateway cjxycloud-leaf cjxycloud-auth cjxycloud-user cjxycloud-website cjxycloud-social
 }
 
 case "$1" in
