@@ -1,5 +1,6 @@
 package com.minio.file.service.impl;
 
+import com.minio.common.exception.ServiceException;
 import com.minio.file.config.MinioConfig;
 import com.minio.file.constant.DataTypeConstant;
 import com.minio.file.domain.SysFile;
@@ -20,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -50,31 +52,44 @@ public class MinioSysFileServiceImpl implements SysFileService {
     private MapperFacade mapperFacade;
 
     @Override
-    public SysFileInfoVO uploadFile(MultipartFile file, Long parentDirId) throws Exception {
+    @Transactional
+    public SysFileInfoVO uploadFile(MultipartFile file, Long parentDirId)  {
 
         String fileName = file.getOriginalFilename();
-        // 上传到Minio
-        PutObjectArgs args = PutObjectArgs.builder()
-                .bucket(minioConfig.getBucketName())
-                .object(fileName)
-                .stream(file.getInputStream(), file.getSize(), -1)
-                .contentType(file.getContentType())
-                .build();
-        minioClient.putObject(args);
+
         // 存储文件信息到数据库
         SysFileInfo sysFileInfo = sysFileInfoMapper.selectSysFileInfoById(parentDirId);
         if (Objects.isNull(sysFileInfo)) {
             sysFileInfo = new SysFileInfo();
-            sysFileInfo.setPath(minioConfig.getUrl() + "/" + minioConfig.getBucketName() + "/" + fileName);
+            sysFileInfo.setPath(fileName);
+
         }else {
             sysFileInfo.setPath(sysFileInfo.getPath()+fileName);
         }
+        // 检查文件是否存在
+        if (!Objects.isNull(sysFileInfoMapper.selectSysFileInfoByPath(sysFileInfo.getPath()))) {
+            throw new ServiceException("文件已存在");
+        }
+
         sysFileInfo.setFileName(fileName);
         sysFileInfo.setExt(FileTypeUtils.getExtension(file));
         sysFileInfo.setDataType(DataTypeConstant.FILE);
         sysFileInfo.setParentDirId(parentDirId);
         sysFileInfo.setSize(FileUploadUtils.getFileSize(file.getSize(), "M"));
         int i = sysFileInfoMapper.insertSysFileInfo(sysFileInfo);
+
+        try {
+            // 上传到Minio
+            PutObjectArgs args = PutObjectArgs.builder()
+                    .bucket(minioConfig.getBucketName())
+                    .object(sysFileInfo.getPath())
+                    .stream(file.getInputStream(), file.getSize(), -1)
+                    .contentType(file.getContentType())
+                    .build();
+            minioClient.putObject(args);
+        }catch (Exception e) {
+            throw new RuntimeException("上传mino出现错误:" + e.getMessage());
+        }
         SysFileInfoVO sysFileInfoVO = mapperFacade.map(sysFileInfo, SysFileInfoVO.class);
 //        return minioConfig.getUrl() + "/" + minioConfig.getBucketName() + "/" + fileName;
         log.info("sysFileInfoVO: {}",sysFileInfoVO);

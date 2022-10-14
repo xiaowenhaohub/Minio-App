@@ -8,13 +8,17 @@
     <insert id="insertSysFileInfo">
         insert into sys_file_info (data_type, file_name, ext, size, path, parent_dir_id)
         values (#{sysFileInfo.dataType}, #{sysFileInfo.fileName},
-                #{sysFileInfo.ext}, #{sysFileInfo.size}, #{sysFileInfo.path}, #{sysFileInfo.parentDirId}, )
+                #{sysFileInfo.ext}, #{sysFileInfo.size}, #{sysFileInfo.path}, #{sysFileInfo.parentDirId} )
     </insert>
     <select id="selectSysFileInfoById" resultType="com.minio.file.domain.SysFileInfo">
         select <include refid="all_columns"></include> from sys_file_info where id = #{id}
     </select>
     <select id="selectSysFileInfoByParentDirId" resultType="com.minio.file.domain.SysFileInfo">
         select <include refid="all_columns"></include> from sys_file_info
-        where parent_dir_id = #{parentDirId} and status = 1
+        where parent_dir_id = #{parentDirId}
+    </select>
+    <select id="selectSysFileInfoByPath" resultType="com.minio.file.domain.SysFileInfo">
+        select <include refid="all_columns"></include> from sys_file_info
+        where path = #{path}
     </select>
 </mapper>

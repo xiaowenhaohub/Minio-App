@@ -18,10 +18,10 @@ spring:
     active: druid, dev
 
 # 日志配置
-logging:
-  level:
-    com.minio: debug
-    org.springframework: warn
+#logging:
+#  level:
+#    com.minio: info
+#    org.springframework: info
 
 #mybatis的相关配置
 mybatis:

@@ -32,12 +32,8 @@ public class FileController {
     @ApiOperation("文件上传")
     @Log(title = "文件上传")
     public AjaxResult uploadFile(MultipartFile file, @RequestParam String parentDirId) {
-        try {
-            return AjaxResult.success(sysFileService.uploadFile(file, Long.valueOf(parentDirId)));
-        } catch (Exception e) {
-            log.error("上传文件失败", e);
-            return AjaxResult.error(e.getMessage());
-        }
+        return AjaxResult.success(sysFileService.uploadFile(file, Long.valueOf(parentDirId)));
+
     }
 
     @GetMapping("/list")

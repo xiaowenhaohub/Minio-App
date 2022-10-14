@@ -37,4 +37,12 @@ public interface SysFileInfoMapper {
      * @return
      */
     int insertSysFileInfo(@Param("sysFileInfo") SysFileInfo sysFileInfo);
+
+    /**
+     * 根据文件路径查询文件是否存在
+     *
+     * @param path 文件路径
+     * @return 文件详情
+     */
+    SysFileInfo selectSysFileInfoByPath(@Param("path") String path);
 }

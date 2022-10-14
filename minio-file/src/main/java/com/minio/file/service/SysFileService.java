@@ -23,7 +23,7 @@ public interface SysFileService {
      * @return 访问地址
      * @throws Exception
      */
-    SysFileInfoVO uploadFile(MultipartFile file, Long parentDirId) throws Exception;
+    SysFileInfoVO uploadFile(MultipartFile file, Long parentDirId);
 
     /**
      * 查询桶下对象
