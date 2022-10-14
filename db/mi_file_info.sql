@@ -4,8 +4,8 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 -- Table structure for users
 -- ----------------------------
-DROP TABLE IF EXISTS `mi_file_infor`;
-CREATE TABLE `mi_file_infor`  (
+DROP TABLE IF EXISTS `mi_file_info`;
+CREATE TABLE `mi_file_info`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `data_type` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '数据类型DIR:目录;IMAGE:图片;VIDEO:视频;AUDIO:音频;DOC:文档;OTHER:其他',
   `file_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '文件名',

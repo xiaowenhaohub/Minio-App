@@ -28,7 +28,8 @@
         <minio.version>8.2.2</minio.version>
         <commons.io.version>2.11.0</commons.io.version>
         <swagger2.version>2.9.2</swagger2.version>
-
+        <mysql.version>8.0.23</mysql.version>
+        <druid.version>1.2.6</druid.version>
     </properties>
 
     <dependencyManagement>
@@ -86,6 +87,18 @@
                 <groupId>io.springfox</groupId>
                 <artifactId>springfox-swagger2</artifactId>
                 <version>${swagger2.version}</version>
+            </dependency>
+            <!--      MySql      -->
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.version}</version>
+            </dependency>
+            <!--阿里数据库连接池 -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid-spring-boot-starter</artifactId>
+                <version>${druid.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
