@@ -38,7 +38,9 @@ import java.util.Objects;
  */
 @Service
 public class MinioSysFileServiceImpl implements SysFileService {
+
     private static final Logger log = LoggerFactory.getLogger(MinioSysFileServiceImpl.class);
+
     @Autowired
     private MinioClient minioClient;
 
