@@ -58,17 +58,22 @@ public class MinioSysFileServiceImpl implements SysFileService {
     @Transactional
     public SysFileInfoVO uploadFile(MultipartFile file, Long parentDirId)  {
 
+        if (parentDirId == null) parentDirId = -1L;
+
         String fileName = file.getOriginalFilename();
 
         // 存储文件信息到数据库
         SysFileInfo sysFileInfo = sysFileInfoMapper.selectSysFileInfoById(parentDirId);
-        if (Objects.isNull(sysFileInfo)) {
+
+        if (Objects.isNull(sysFileInfo) && parentDirId == -1) {
             sysFileInfo = new SysFileInfo();
             sysFileInfo.setPath(fileName);
-
-        }else {
+        }else if(!Objects.isNull(sysFileInfo) && sysFileInfo.getDataType() == 1) {
             sysFileInfo.setPath(sysFileInfo.getPath()+fileName);
+        }else {
+            throw new ServiceException("文件夹不存在");
         }
+
         // 检查文件是否存在
         if (!Objects.isNull(sysFileInfoMapper.selectSysFileInfoByPath(sysFileInfo.getPath()))) {
             throw new ServiceException("文件已存在");
@@ -78,47 +83,32 @@ public class MinioSysFileServiceImpl implements SysFileService {
         sysFileInfo.setExt(FileTypeUtils.getExtension(file));
         sysFileInfo.setDataType(DataTypeConstant.FILE);
         sysFileInfo.setParentDirId(parentDirId);
-        sysFileInfo.setSize(FileUploadUtils.getFileSize(file.getSize(), "M"));
+        sysFileInfo.setSize(FileUploadUtils.getFileSize(file.getSize()));
         int i = sysFileInfoMapper.insertSysFileInfo(sysFileInfo);
 
         // 上传到Minio
         MinioUtils.putObject(minioClient, minioConfig.getBucketName(), sysFileInfo.getPath(), file);
-
-//        try {
-//
-//            PutObjectArgs args = PutObjectArgs.builder()
-//                    .bucket(minioConfig.getBucketName())
-//                    .object(sysFileInfo.getPath())
-//                    .stream(file.getInputStream(), file.getSize(), -1)
-//                    .contentType(file.getContentType())
-//                    .build();
-//            minioClient.putObject(args);
-//        }catch (Exception e) {
-//            throw new RuntimeException("上传mino出现错误:" + e.getMessage());
-//        }
         SysFileInfoVO sysFileInfoVO = mapperFacade.map(sysFileInfo, SysFileInfoVO.class);
-//        return minioConfig.getUrl() + "/" + minioConfig.getBucketName() + "/" + fileName;
-        log.info("sysFileInfoVO: {}",sysFileInfoVO);
         return sysFileInfoVO;
     }
 
 
     @Override
-    public List<SysFile> listObjects() {
-        List<SysFile> fileList = new ArrayList<>();
-        Iterable<Result<Item>> listObjects = minioClient.listObjects(ListObjectsArgs.builder()
-                .bucket(minioConfig.getBucketName())
-                .build());
-        for (Result<Item> result : listObjects) {
-            Item item = null;
-            try {
-                item = result.get();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-            fileList.add(new SysFile(item.objectName(), null));
-        }
-
-        return fileList;
+    public List<SysFileInfoVO> querySysFileList(Long dirId) {
+//        List<SysFile> fileList = new ArrayList<>();
+//        Iterable<Result<Item>> listObjects = minioClient.listObjects(ListObjectsArgs.builder()
+//                .bucket(minioConfig.getBucketName())
+//                .build());
+//        for (Result<Item> result : listObjects) {
+//            Item item = null;
+//            try {
+//                item = result.get();
+//            } catch (Exception e) {
+//                throw new RuntimeException(e);
+//            }
+//            fileList.add(new SysFile(item.objectName(), null));
+//        }
+        List<SysFileInfo> sysFileInfoList = sysFileInfoMapper.selectSysFileInfoByParentDirId(dirId);
+        return mapperFacade.mapAsList(sysFileInfoList, SysFileInfoVO.class);
     }
 }

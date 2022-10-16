@@ -28,17 +28,17 @@ public class FileController {
     @Autowired
     private SysFileService sysFileService;
 
-    @PostMapping("/upload")
+    @PostMapping("/upload/{parentDirId}")
     @ApiOperation("文件上传")
     @Log(title = "文件上传")
-    public AjaxResult uploadFile(MultipartFile file, @RequestParam String parentDirId) {
-        return AjaxResult.success(sysFileService.uploadFile(file, Long.valueOf(parentDirId)));
+    public AjaxResult uploadFile(MultipartFile file, @PathVariable Long parentDirId) {
+        return AjaxResult.success(sysFileService.uploadFile(file, parentDirId));
 
     }
 
-    @GetMapping("/list")
+    @GetMapping("/list/{dirId}")
     @Log(title = "查询文件列表")
-    public AjaxResult getFileList() {
-        return AjaxResult.success(sysFileService.listObjects());
+    public AjaxResult getFileList(@PathVariable Long dirId) {
+        return AjaxResult.success(sysFileService.querySysFileList(dirId));
     }
 }

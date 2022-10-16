@@ -26,8 +26,8 @@ public interface SysFileService {
     SysFileInfoVO uploadFile(MultipartFile file, Long parentDirId);
 
     /**
-     * 查询桶下对象
+     * 查询文件夹文件列表
      * @return
      */
-    List<SysFile> listObjects();
+    List<SysFileInfoVO> querySysFileList(Long dirId);
 }
