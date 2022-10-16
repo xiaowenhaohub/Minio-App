@@ -19,6 +19,13 @@ import java.security.NoSuchAlgorithmException;
 public class MinioUtils {
 
 
+    /**
+     * 上传文件
+     * @param minioClient
+     * @param bucketName
+     * @param filePath
+     * @param file
+     */
     public static void putObject(MinioClient minioClient, String bucketName, String filePath, MultipartFile file) {
         PutObjectArgs args = getArgs(bucketName, filePath, file);
         try {

@@ -81,11 +81,11 @@ public class MinioSysFileServiceImpl implements SysFileService {
         sysFileInfo.setSize(FileUploadUtils.getFileSize(file.getSize(), "M"));
         int i = sysFileInfoMapper.insertSysFileInfo(sysFileInfo);
 
-        PutObjectArgs args = MinioUtils.getArgs(minioConfig.getBucketName(), sysFileInfo.getPath(), file);
-        minioClient.putObject(args);
+        // 上传到Minio
+        MinioUtils.putObject(minioClient, minioConfig.getBucketName(), sysFileInfo.getPath(), file);
 
 //        try {
-//            // 上传到Minio
+//
 //            PutObjectArgs args = PutObjectArgs.builder()
 //                    .bucket(minioConfig.getBucketName())
 //                    .object(sysFileInfo.getPath())
