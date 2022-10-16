@@ -21,4 +21,7 @@
         select <include refid="all_columns"></include> from sys_file_info
         where path = #{path}
     </select>
+    <select id="querySysFileInfoNum" resultType="java.lang.Integer">
+        select count(id) from sys_file_info where parent_dir_id = #{parentDirId}
+    </select>
 </mapper>

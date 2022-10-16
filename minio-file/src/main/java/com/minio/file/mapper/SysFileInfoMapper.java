@@ -45,4 +45,12 @@ public interface SysFileInfoMapper {
      * @return 文件详情
      */
     SysFileInfo selectSysFileInfoByPath(@Param("path") String path);
+
+
+    /**
+     * 查询文件数量
+     * @param parentDirId 父目录id
+     * @return 文件数
+     */
+    Integer querySysFileInfoNum(@Param("parentDirId") Long parentDirId);
 }

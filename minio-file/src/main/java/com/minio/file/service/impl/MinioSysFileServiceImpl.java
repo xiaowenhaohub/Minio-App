@@ -5,6 +5,7 @@ import com.minio.file.config.MinioConfig;
 import com.minio.file.constant.DataTypeConstant;
 import com.minio.file.domain.SysFile;
 import com.minio.file.domain.SysFileInfo;
+import com.minio.file.domain.vo.SysDirInfoVO;
 import com.minio.file.domain.vo.SysFileInfoVO;
 import com.minio.file.mapper.SysFileInfoMapper;
 import com.minio.file.service.SysFileService;
@@ -58,21 +59,31 @@ public class MinioSysFileServiceImpl implements SysFileService {
     @Transactional
     public SysFileInfoVO uploadFile(MultipartFile file, Long parentDirId)  {
 
-        if (parentDirId == null) parentDirId = -1L;
 
         String fileName = file.getOriginalFilename();
 
         // 存储文件信息到数据库
         SysFileInfo sysFileInfo = sysFileInfoMapper.selectSysFileInfoById(parentDirId);
 
-        if (Objects.isNull(sysFileInfo) && parentDirId == -1) {
-            sysFileInfo = new SysFileInfo();
-            sysFileInfo.setPath(fileName);
-        }else if(!Objects.isNull(sysFileInfo) && sysFileInfo.getDataType() == 1) {
-            sysFileInfo.setPath(sysFileInfo.getPath()+fileName);
-        }else {
+//        if (!Objects.isNull(sysFileInfo) && parentDirId == -1) {
+//            sysFileInfo.setPath(fileName);
+//        }else if(!Objects.isNull(sysFileInfo) && sysFileInfo.getDataType() == 1) {
+//            sysFileInfo.setPath(sysFileInfo.getPath()+fileName);
+//        }else {
+//            throw new ServiceException("文件夹不存在");
+//        }
+
+//        if(!Objects.isNull(sysFileInfo) && sysFileInfo.getDataType() == 1) {
+//            sysFileInfo.setPath(sysFileInfo.getPath() + fileName);
+//        }else {
+//            throw new ServiceException("文件夹不存在");
+//        }
+
+        if(Objects.isNull(sysFileInfo) || sysFileInfo.getDataType() != 1) {
             throw new ServiceException("文件夹不存在");
         }
+
+        sysFileInfo.setPath(sysFileInfo.getPath() + "/" + fileName);
 
         // 检查文件是否存在
         if (!Objects.isNull(sysFileInfoMapper.selectSysFileInfoByPath(sysFileInfo.getPath()))) {
@@ -83,7 +94,7 @@ public class MinioSysFileServiceImpl implements SysFileService {
         sysFileInfo.setExt(FileTypeUtils.getExtension(file));
         sysFileInfo.setDataType(DataTypeConstant.FILE);
         sysFileInfo.setParentDirId(parentDirId);
-        sysFileInfo.setSize(FileUploadUtils.getFileSize(file.getSize()));
+        sysFileInfo.setSize(file.getSize());
         int i = sysFileInfoMapper.insertSysFileInfo(sysFileInfo);
 
         // 上传到Minio
@@ -110,5 +121,44 @@ public class MinioSysFileServiceImpl implements SysFileService {
 //        }
         List<SysFileInfo> sysFileInfoList = sysFileInfoMapper.selectSysFileInfoByParentDirId(dirId);
         return mapperFacade.mapAsList(sysFileInfoList, SysFileInfoVO.class);
+    }
+
+    @Override
+    public SysDirInfoVO queryDirInfo(Long dirId) {
+
+        SysFileInfo sysFileInfo = sysFileInfoMapper.selectSysFileInfoById(dirId);
+
+        if (Objects.isNull(sysFileInfo) || sysFileInfo.getDataType() != 1) {
+            throw new ServiceException("没有该文件夹");
+        }
+        SysDirInfoVO sysDirInfoVO = mapperFacade.map(sysFileInfo, SysDirInfoVO.class);
+
+        sysDirInfoVO.setFileNum(sysFileInfoMapper.querySysFileInfoNum(dirId));
+        return sysDirInfoVO;
+    }
+
+    @Override
+    @Transactional
+    public SysDirInfoVO createDir(Long parentDirId, String dirName) {
+        SysFileInfo sysFileInfo = sysFileInfoMapper.selectSysFileInfoById(parentDirId);
+
+        if (Objects.isNull(sysFileInfo) || sysFileInfo.getDataType() != 1) {
+            throw new ServiceException("不能在不存在的文件夹下创建文件夹");
+        }
+        String dirPath = sysFileInfo.getPath() + "/" + dirName;
+
+        // 检查文件是否存在
+        if (!Objects.isNull(sysFileInfoMapper.selectSysFileInfoByPath(dirPath))) {
+            throw new ServiceException("文件夹已存在");
+        }
+        sysFileInfo.setFileName(dirName);
+        sysFileInfo.setDataType(1);
+        sysFileInfo.setPath(dirPath);
+        sysFileInfo.setSize(0L);
+        sysFileInfo.setParentDirId(parentDirId);
+        sysFileInfoMapper.insertSysFileInfo(sysFileInfo);
+        SysDirInfoVO sysDirInfoVO = mapperFacade.map(sysFileInfo, SysDirInfoVO.class);
+        sysDirInfoVO.setFileNum(0);
+        return sysDirInfoVO;
     }
 }

@@ -1,15 +1,12 @@
-package com.minio.file.domain;
-
-import com.minio.common.domain.BaseEntity;
+package com.minio.file.domain.vo;
 
 /**
  * @author 小问号
- * @date 2022/10/14 11
+ * @date 2022/10/16 23
  * description
  */
 
-public class SysFileInfo extends BaseEntity {
-
+public class SysDirInfoVO {
     /**
      * 主键
      */
@@ -21,29 +18,14 @@ public class SysFileInfo extends BaseEntity {
     private Long parentDirId;
 
     /**
-     * 1 DIR:目录; 0 FILE文件
-     */
-    private Integer dataType;
-
-    /**
      * 文件名称
      */
     private String fileName;;
 
     /**
-     * 文件后缀
-     */
-    private String ext;
-
-    /**
      * 文件大小
      */
-    private Long size;
-
-    /**
-     * 文件md5值
-     */
-    private String fileMd5;
+    private String size;
 
     /**
      * 文件路径
@@ -51,9 +33,9 @@ public class SysFileInfo extends BaseEntity {
     private String path;
 
     /**
-     * 文件状态
+     * 文件数量
      */
-    private Integer status;
+    private Integer fileNum;
 
     public Long getId() {
         return id;
@@ -71,14 +53,6 @@ public class SysFileInfo extends BaseEntity {
         this.parentDirId = parentDirId;
     }
 
-    public Integer getDataType() {
-        return dataType;
-    }
-
-    public void setDataType(Integer dataType) {
-        this.dataType = dataType;
-    }
-
     public String getFileName() {
         return fileName;
     }
@@ -87,28 +61,12 @@ public class SysFileInfo extends BaseEntity {
         this.fileName = fileName;
     }
 
-    public String getExt() {
-        return ext;
-    }
-
-    public void setExt(String ext) {
-        this.ext = ext;
-    }
-
-    public Long getSize() {
+    public String getSize() {
         return size;
     }
 
-    public void setSize(Long size) {
+    public void setSize(String size) {
         this.size = size;
-    }
-
-    public String getFileMd5() {
-        return fileMd5;
-    }
-
-    public void setFileMd5(String fileMd5) {
-        this.fileMd5 = fileMd5;
     }
 
     public String getPath() {
@@ -119,26 +77,23 @@ public class SysFileInfo extends BaseEntity {
         this.path = path;
     }
 
-    public Integer getStatus() {
-        return status;
+    public Integer getFileNum() {
+        return fileNum;
     }
 
-    public void setStatus(Integer status) {
-        this.status = status;
+    public void setFileNum(Integer fileNum) {
+        this.fileNum = fileNum;
     }
 
     @Override
     public String toString() {
-        return "SysFileInfo{" +
+        return "SysDirInfoVO{" +
                 "id=" + id +
                 ", parentDirId=" + parentDirId +
-                ", dataType='" + dataType + '\'' +
                 ", fileName='" + fileName + '\'' +
-                ", ext='" + ext + '\'' +
                 ", size='" + size + '\'' +
-                ", fileMd5='" + fileMd5 + '\'' +
                 ", path='" + path + '\'' +
-                ", status=" + status +
+                ", fileNum=" + fileNum +
                 '}';
     }
 }
