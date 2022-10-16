@@ -10,6 +10,7 @@ import com.minio.file.mapper.SysFileInfoMapper;
 import com.minio.file.service.SysFileService;
 import com.minio.file.utils.FileTypeUtils;
 import com.minio.file.utils.FileUploadUtils;
+import com.minio.file.utils.MinioUtils;
 import io.minio.ListObjectsArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
@@ -80,18 +81,21 @@ public class MinioSysFileServiceImpl implements SysFileService {
         sysFileInfo.setSize(FileUploadUtils.getFileSize(file.getSize(), "M"));
         int i = sysFileInfoMapper.insertSysFileInfo(sysFileInfo);
 
-        try {
-            // 上传到Minio
-            PutObjectArgs args = PutObjectArgs.builder()
-                    .bucket(minioConfig.getBucketName())
-                    .object(sysFileInfo.getPath())
-                    .stream(file.getInputStream(), file.getSize(), -1)
-                    .contentType(file.getContentType())
-                    .build();
-            minioClient.putObject(args);
-        }catch (Exception e) {
-            throw new RuntimeException("上传mino出现错误:" + e.getMessage());
-        }
+        PutObjectArgs args = MinioUtils.getArgs(minioConfig.getBucketName(), sysFileInfo.getPath(), file);
+        minioClient.putObject(args);
+
+//        try {
+//            // 上传到Minio
+//            PutObjectArgs args = PutObjectArgs.builder()
+//                    .bucket(minioConfig.getBucketName())
+//                    .object(sysFileInfo.getPath())
+//                    .stream(file.getInputStream(), file.getSize(), -1)
+//                    .contentType(file.getContentType())
+//                    .build();
+//            minioClient.putObject(args);
+//        }catch (Exception e) {
+//            throw new RuntimeException("上传mino出现错误:" + e.getMessage());
+//        }
         SysFileInfoVO sysFileInfoVO = mapperFacade.map(sysFileInfo, SysFileInfoVO.class);
 //        return minioConfig.getUrl() + "/" + minioConfig.getBucketName() + "/" + fileName;
         log.info("sysFileInfoVO: {}",sysFileInfoVO);
