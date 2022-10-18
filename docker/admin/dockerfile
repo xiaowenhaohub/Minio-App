@@ -1,0 +1,14 @@
+# 基础镜像  auth
+FROM  openjdk:8-jre
+# author
+MAINTAINER xiaowenhao
+# 挂载目录
+VOLUME /home/minio
+# 创建目录
+RUN mkdir -p /home/minio
+# 指定路径
+WORKDIR /home/minio
+# 复制jar文件到路径
+COPY ./jar/minio-admin.jar /home/minio/minio-admin.jar
+# 启动认证服务
+ENTRYPOINT ["java","-jar","minio-admin.jar"]

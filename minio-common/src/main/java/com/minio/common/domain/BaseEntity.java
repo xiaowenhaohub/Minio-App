@@ -1,6 +1,7 @@
 package com.minio.common.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -18,10 +19,12 @@ public class BaseEntity {
 
     /** 创建时间 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty(hidden = true)
     private Date createTime;
 
     /** 更新时间 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty(hidden = true)
     private Date updateTime;
 
     public Date getCreateTime() {

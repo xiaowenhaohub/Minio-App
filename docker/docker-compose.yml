@@ -38,3 +38,11 @@ services:
     ]
     environment:
       MYSQL_ROOT_PASSWORD: passwrod
+
+  minio-app:
+    container_name: minio-app
+    build:
+      context: ./admin
+      dockerfile: dockerfile
+    ports:
+      - "9999:9999"

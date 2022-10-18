@@ -1,7 +1,7 @@
 #!/bin/sh
 
 usage() {
-  echo "usage:  ./bin.sh [base|modules|send {发送到服务器}|sshkey {配置ssh}|stop|rm]"
+  echo "usage:  ./bin.sh [copy|send|base|modules|rm |复制文件|发送到服务器|启动基础服务|启动app|停止并删除docker容器及镜像]"
 }
 
 sshkey() {
@@ -9,17 +9,37 @@ sshkey() {
   ssh-copy-id root@$1
 }
 
-send() {
+copy() {
+  echo "begin copy......"
+  cp -rf ../minio-admin/target/minio-admin.jar ./admin/jar/minio-admin.jar
+}
 
+send() {
   echo "发送docker到$1:/home/app/minio......"
-  scp -r ../docker root@$1:/home/app/minio/
+  scp -r ../docker root@$1:/app/minio/
 }
 
 base(){
   docker-compose up -d minio-service
 }
 
+modules() {
+    docker-compose up -d minio-app
+}
+
+rm() {
+  docker stop minio-app
+  docker rm minio-app
+  docker rmi docker_minio-app
+}
+
 case "$1" in
+"rm")
+  rm
+;;
+"copy")
+  copy
+;;
 "base")
   base
 ;;

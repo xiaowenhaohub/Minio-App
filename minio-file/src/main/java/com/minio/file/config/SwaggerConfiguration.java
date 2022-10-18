@@ -1,6 +1,8 @@
-package com.minio.framework.config;
+package com.minio.file.config;
 
-import io.swagger.annotations.ApiOperation;
+import com.fasterxml.classmate.TypeResolver;
+import com.minio.file.domain.SysFileInfo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -21,6 +23,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SwaggerConfiguration {
 
+    @Autowired
+    TypeResolver typeResolver;
+
     @Bean
     public Docket baseRestApi() {
         return new Docket(DocumentationType.SWAGGER_2)
@@ -29,7 +34,8 @@ public class SwaggerConfiguration {
 //                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 .apis(RequestHandlerSelectors.basePackage("com.minio.file"))
                 .paths(PathSelectors.any())
-                .build();
+                .build()
+                .additionalModels(typeResolver.resolve(SysFileInfo.class));
     }
 
     @Bean
