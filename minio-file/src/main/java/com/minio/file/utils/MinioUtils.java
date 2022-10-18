@@ -1,9 +1,7 @@
 package com.minio.file.utils;
 
 import com.minio.common.exception.ServiceException;
-import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
-import io.minio.RemoveObjectArgs;
+import io.minio.*;
 import io.minio.errors.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,6 +17,17 @@ import java.security.NoSuchAlgorithmException;
  */
 
 public class MinioUtils {
+
+    public static InputStream getObject(MinioClient minioClient, String bucketName, String filePath) {
+        GetObjectArgs getObjectArgs = GetObjectArgs.builder().bucket(bucketName).object(filePath).build();
+        GetObjectResponse object = null;
+        try {
+            object = minioClient.getObject(getObjectArgs);
+        } catch (Exception e) {
+            throw new ServiceException("获取文件输入流错误:" + e.getMessage());
+        }
+        return object;
+    }
 
 
     /**

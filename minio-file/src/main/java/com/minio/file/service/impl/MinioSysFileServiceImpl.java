@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -170,5 +171,14 @@ public class MinioSysFileServiceImpl implements SysFileService {
         sysFileInfoMapper.deleteSysFileInfo(sysFileInfo.getId());
         MinioUtils.deleteObject(minioClient, minioConfig.getBucketName(), sysFileInfo.getPath());
         return mapperFacade.map(sysFileInfo, SysFileInfoVO.class);
+    }
+
+    @Override
+    public InputStream getFileInputStream(Long fileId) {
+        SysFileInfo sysFileInfo = sysFileInfoMapper.selectSysFileInfoById(fileId);
+        if (Objects.isNull(sysFileInfo)) {
+            throw new ServiceException("文件不存在");
+        }
+        return MinioUtils.getObject(minioClient,minioConfig.getBucketName(), sysFileInfo.getPath());
     }
 }

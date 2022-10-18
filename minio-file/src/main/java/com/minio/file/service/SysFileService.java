@@ -8,6 +8,7 @@ import io.minio.Result;
 import io.minio.messages.Item;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -59,4 +60,11 @@ public interface SysFileService {
      * @return
      */
     SysFileInfoVO deleteSysFileInfo(Long fileId);
+
+    /**
+     * 获取文件输入流
+     * @param fileId
+     * @return
+     */
+    InputStream getFileInputStream(Long fileId);
 }

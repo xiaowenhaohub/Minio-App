@@ -12,12 +12,19 @@ import com.minio.file.service.SysFileService;
 import com.minio.file.utils.FileUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.http.util.EncodingUtils;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 /**
@@ -74,4 +81,34 @@ public class FileController {
     public AjaxResult deleteFile(@PathVariable Long fileId) {
         return AjaxResult.success("删除成功", sysFileService.deleteSysFileInfo(fileId));
     }
+
+    @GetMapping("/download/{fileId}")
+    @ApiOperation("删除文件")
+    @Log(title = "删除文件")
+    public void download(@PathVariable Long fileId, HttpServletRequest request, HttpServletResponse response) {
+        SysFileInfoVO sysFileInfoVO = sysFileService.querySysFileInfoById(fileId);
+        OutputStream outputStream = null;
+        InputStream inputStream = null;
+        try {
+            inputStream = sysFileService.getFileInputStream(fileId);
+            response.setHeader("Content-Disposition", "attachment;filename=" + sysFileInfoVO.getFileName());
+            // 获取输出流
+            outputStream = response.getOutputStream();
+            IOUtils.copy(inputStream, outputStream);
+        } catch (IOException e) {
+            throw new RuntimeException("文件下载失败:" + e.getMessage());
+        } finally {
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }
