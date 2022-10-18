@@ -1,6 +1,7 @@
 package com.minio.file.mapper;
 
 import com.minio.file.domain.SysFileInfo;
+import com.minio.file.domain.vo.SysFileInfoVO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -52,12 +53,21 @@ public interface SysFileInfoMapper {
      * @param parentDirId 父目录id
      * @return 文件数
      */
-    Integer querySysFileInfoNum(@Param("parentDirId") Long parentDirId);
+    int querySysFileInfoNum(@Param("parentDirId") Long parentDirId);
 
     /**
      * 根据文件id删除文件
      * @param fileId
      * @return
      */
-    Integer deleteSysFileInfo(@Param("fileId") Long fileId);
+    int deleteSysFileInfo(@Param("fileId") Long fileId);
+
+    /**
+     * 更新文件信息
+     * @param sysFileInfo
+     * @return
+     */
+    int updateSysFileInfo(@Param("sysFileInfo") SysFileInfo sysFileInfo);
+
+
 }

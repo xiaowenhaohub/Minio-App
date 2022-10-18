@@ -10,6 +10,21 @@
         values (#{sysFileInfo.id}, #{sysFileInfo.dataType}, #{sysFileInfo.fileName},
                 #{sysFileInfo.ext}, #{sysFileInfo.size}, #{sysFileInfo.path}, #{sysFileInfo.parentDirId} )
     </insert>
+    <update id="updateSysFileInfo">
+        update sys_file_info
+        <set>
+            <if test="sysFileInfo.fileName != null adn sysFileInfo.fileName != ''">
+                file_name = #{sysFileInfo.fileName},
+            </if>
+            <if test="sysFileInfo.path != null and sysFileInfo.path != ''">
+                path = #{sysFileInfo.path},
+            </if>
+            <if test="sysFileInfo.parentDirId != null and sysFileInfo.parentDirId != ''">
+                parent_dir_id = #{sysFileInfo.parentDirId},
+            </if>
+        </set>
+        where id = #{sysFileInfo.id}
+    </update>
     <delete id="deleteSysFileInfo">
         delete from sys_file_info where id = #{fileId}
     </delete>

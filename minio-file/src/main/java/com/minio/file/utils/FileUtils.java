@@ -41,6 +41,29 @@ public class FileUtils
         return byteArrayOutputStream.toByteArray();
     }
 
+
+    /**
+     * 获取文件大小
+     *
+     * @param len
+     *            文件大小
+     * @param
+     *            （B,K,M,G）
+     * @return
+     */
+    public static String getFileSize(Long len) {
+        if (len < 1024) {
+            return  String.format("%.1f",(double) len) + " B";
+        }else if (len < 1048576) {
+            return  String.format("%.1f",(double) len / 1024) + " KiB";
+        }else if (len < 1073741824) {
+            return  String.format("%.1f",(double) len / 1048576) + " MiB";
+        }else {
+            return  String.format("%.1f",(double) len / 1073741824) + " G";
+        }
+    }
+
+
     /**
      * 输出指定文件的byte数组
      *

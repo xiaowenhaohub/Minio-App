@@ -1,13 +1,14 @@
 package com.minio.file.domain;
 
 import com.minio.common.domain.BaseEntity;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * @author 小问号
  * @date 2022/10/14 11
  * description
  */
-
 public class SysFileInfo extends BaseEntity {
 
     /**

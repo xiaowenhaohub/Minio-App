@@ -181,4 +181,16 @@ public class MinioSysFileServiceImpl implements SysFileService {
         }
         return MinioUtils.getObject(minioClient,minioConfig.getBucketName(), sysFileInfo.getPath());
     }
+
+    @Override
+    @Transactional
+    public SysFileInfoVO updateSysFile(SysFileInfo sysFileInfo) {
+        try {
+            int i = sysFileInfoMapper.updateSysFileInfo(sysFileInfo);
+
+        }catch (Exception e) {
+            throw new ServiceException("更新文件失败");
+        }
+        return mapperFacade.map(sysFileInfo, SysFileInfoVO.class);
+    }
 }

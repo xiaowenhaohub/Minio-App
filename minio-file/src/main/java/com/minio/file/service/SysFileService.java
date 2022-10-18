@@ -67,4 +67,11 @@ public interface SysFileService {
      * @return
      */
     InputStream getFileInputStream(Long fileId);
+
+    /**
+     * 更新文件信息
+     * @param sysFileInfo
+     * @return
+     */
+    SysFileInfoVO updateSysFile(SysFileInfo sysFileInfo);
 }
