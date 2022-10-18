@@ -25,6 +25,23 @@ public class FileUtils
     public static String FILENAME_PATTERN = "[a-zA-Z0-9_\\-\\|\\.\\u4e00-\\u9fa5]+";
 
     /**
+     * InputStream转 byte数组
+     *
+     * @param inputStream 输入流
+     * @return {@link byte[]}
+     * @throws IOException ioexception
+     */
+    public static byte[] inputStreamToByte(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        byte[] buff = new byte[1024];
+        int rc = 0;
+        while ((rc = inputStream.read(buff, 0, 1024)) > 0) {
+            byteArrayOutputStream.write(buff, 0, rc);
+        }
+        return byteArrayOutputStream.toByteArray();
+    }
+
+    /**
      * 输出指定文件的byte数组
      *
      * @param filePath 文件路径

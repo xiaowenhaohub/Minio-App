@@ -5,7 +5,6 @@ package com.minio.file.constant;
  * @date 2022/10/14 10
  * description
  */
-
 public interface DataTypeConstant {
 
     /**

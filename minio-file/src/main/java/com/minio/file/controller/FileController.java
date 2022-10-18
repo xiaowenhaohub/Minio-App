@@ -5,6 +5,8 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.minio.common.annotation.Log;
 import com.minio.common.core.AjaxResult;
+import com.minio.common.exception.ServiceException;
+import com.minio.file.constant.SysConstant;
 import com.minio.file.domain.SysFile;
 import com.minio.file.domain.vo.SysDirInfoVO;
 import com.minio.file.domain.vo.SysFileInfoVO;
@@ -12,11 +14,15 @@ import com.minio.file.service.SysFileService;
 import com.minio.file.utils.FileUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import okhttp3.internal.http2.ErrorCode;
 import org.apache.http.util.EncodingUtils;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -83,8 +89,8 @@ public class FileController {
     }
 
     @GetMapping("/download/{fileId}")
-    @ApiOperation("删除文件")
-    @Log(title = "删除文件")
+    @ApiOperation("下载文件")
+    @Log(title = "下载文件")
     public void download(@PathVariable Long fileId, HttpServletRequest request, HttpServletResponse response) {
         SysFileInfoVO sysFileInfoVO = sysFileService.querySysFileInfoById(fileId);
         OutputStream outputStream = null;
@@ -111,4 +117,15 @@ public class FileController {
         }
     }
 
+    @GetMapping(value = "/view/{fileId}", produces = MediaType.IMAGE_PNG_VALUE)
+    @ApiOperation("图片/PDF查看")
+    @Log(title = "图片/PDF查看")
+    public ResponseEntity<byte[]> viewFilesImage(@PathVariable Long fileId) throws IOException {
+        SysFileInfoVO sysFileInfoVO = sysFileService.querySysFileInfoById(fileId);
+        if (!SysConstant.IMAGE_TYPE.contains(sysFileInfoVO.getExt())) {
+            throw new ServiceException("非图片/PDF类型请先下载");
+        }
+        InputStream inputStream = sysFileService.getFileInputStream(fileId);
+        return new ResponseEntity<>(FileUtils.inputStreamToByte(inputStream), HttpStatus.OK);
+    }
 }
