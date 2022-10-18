@@ -39,8 +39,7 @@ public class FileController {
     @ApiOperation("文件上传")
     @Log(title = "文件上传")
     public AjaxResult uploadFile(MultipartFile file, @PathVariable Long parentDirId) {
-        return AjaxResult.success(sysFileService.uploadFile(file, parentDirId));
-
+        return AjaxResult.success("上传成功", sysFileService.uploadFile(file, parentDirId));
     }
 
     @GetMapping("/list/{dirId}")
@@ -52,13 +51,27 @@ public class FileController {
         JSONObject object = new JSONObject();
         object.put("dirInfo",sysFileInfoVO);
         object.put("FileList",fileList);
-        return AjaxResult.success(object);
+        return AjaxResult.success("查询成功", object);
     }
 
     @GetMapping("/create/{parentDirId}/{dirName}")
     @ApiOperation("创建文件夹")
     @Log(title = "创建文件夹")
     public AjaxResult createDir(@PathVariable Long parentDirId, @PathVariable String dirName) {
-        return AjaxResult.success(sysFileService.createDir(parentDirId, dirName));
+        return AjaxResult.success("创建成功", sysFileService.createDir(parentDirId, dirName));
+    }
+
+    @GetMapping("/query/{fileId}")
+    @ApiOperation("查询文件详情")
+    @Log(title = "查询文件详情")
+    public AjaxResult queryFile(@PathVariable Long fileId) {
+        return AjaxResult.success("查询成功", sysFileService.querySysFileInfoById(fileId));
+    }
+
+    @DeleteMapping("/delete/{fileId}")
+    @ApiOperation("删除文件")
+    @Log(title = "删除文件")
+    public AjaxResult deleteFile(@PathVariable Long fileId) {
+        return AjaxResult.success("删除成功", sysFileService.deleteSysFileInfo(fileId));
     }
 }

@@ -45,4 +45,18 @@ public interface SysFileService {
      * @return
      */
     SysDirInfoVO createDir(Long parentDirId, String dirName);
+
+    /**
+     * 查询文件详情
+     * @param fileId
+     * @return
+     */
+    SysFileInfoVO querySysFileInfoById(Long fileId);
+
+    /**
+     * 删除文件
+     * @param fileId
+     * @return
+     */
+    SysFileInfoVO deleteSysFileInfo(Long fileId);
 }

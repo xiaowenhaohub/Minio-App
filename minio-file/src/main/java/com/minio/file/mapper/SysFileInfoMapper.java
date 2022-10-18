@@ -53,4 +53,11 @@ public interface SysFileInfoMapper {
      * @return 文件数
      */
     Integer querySysFileInfoNum(@Param("parentDirId") Long parentDirId);
+
+    /**
+     * 根据文件id删除文件
+     * @param fileId
+     * @return
+     */
+    Integer deleteSysFileInfo(@Param("fileId") Long fileId);
 }

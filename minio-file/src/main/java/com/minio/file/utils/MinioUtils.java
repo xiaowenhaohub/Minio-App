@@ -1,7 +1,9 @@
 package com.minio.file.utils;
 
+import com.minio.common.exception.ServiceException;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
+import io.minio.RemoveObjectArgs;
 import io.minio.errors.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,6 +19,22 @@ import java.security.NoSuchAlgorithmException;
  */
 
 public class MinioUtils {
+
+
+    /**
+     * 删除文件
+     * @param minioClient
+     * @param bucketName
+     * @param filePath
+     */
+    public static void deleteObject(MinioClient minioClient, String bucketName, String filePath) {
+        RemoveObjectArgs removeObjectArgs = RemoveObjectArgs.builder().bucket(bucketName).object(filePath).build();
+        try {
+            minioClient.removeObject(removeObjectArgs);
+        } catch (Exception e) {
+            throw new ServiceException("Mino删除文件错误:" + e.getMessage());
+        }
+    }
 
 
     /**

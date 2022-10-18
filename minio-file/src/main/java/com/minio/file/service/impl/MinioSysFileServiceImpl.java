@@ -1,6 +1,7 @@
 package com.minio.file.service.impl;
 
 import com.minio.common.exception.ServiceException;
+import com.minio.common.utils.SnowFlakeUtils;
 import com.minio.file.config.MinioConfig;
 import com.minio.file.constant.DataTypeConstant;
 import com.minio.file.domain.SysFile;
@@ -55,6 +56,7 @@ public class MinioSysFileServiceImpl implements SysFileService {
     @Autowired
     private MapperFacade mapperFacade;
 
+
     @Override
     @Transactional
     public SysFileInfoVO uploadFile(MultipartFile file, Long parentDirId)  {
@@ -75,7 +77,8 @@ public class MinioSysFileServiceImpl implements SysFileService {
         if (!Objects.isNull(sysFileInfoMapper.selectSysFileInfoByPath(sysFileInfo.getPath()))) {
             throw new ServiceException("文件已存在");
         }
-
+        //雪花算法生成id
+        sysFileInfo.setId(SnowFlakeUtils.getInstance().nextId());
         sysFileInfo.setFileName(fileName);
         sysFileInfo.setExt(FileTypeUtils.getExtension(file));
         sysFileInfo.setDataType(DataTypeConstant.FILE);
@@ -124,6 +127,7 @@ public class MinioSysFileServiceImpl implements SysFileService {
         if (!Objects.isNull(sysFileInfoMapper.selectSysFileInfoByPath(dirPath))) {
             throw new ServiceException("文件夹已存在");
         }
+        sysFileInfo.setId(SnowFlakeUtils.getInstance().nextId());
         sysFileInfo.setFileName(dirName);
         sysFileInfo.setDataType(1);
         sysFileInfo.setPath(dirPath);
@@ -133,5 +137,38 @@ public class MinioSysFileServiceImpl implements SysFileService {
         SysDirInfoVO sysDirInfoVO = mapperFacade.map(sysFileInfo, SysDirInfoVO.class);
         sysDirInfoVO.setFileNum(0);
         return sysDirInfoVO;
+    }
+
+    @Override
+    public SysFileInfoVO querySysFileInfoById(Long fileId) {
+        SysFileInfo sysFileInfo = sysFileInfoMapper.selectSysFileInfoById(fileId);
+        if (Objects.isNull(sysFileInfo)) {
+            throw new ServiceException("文件不存在");
+        }
+        return mapperFacade.map(sysFileInfo, SysFileInfoVO.class);
+    }
+
+    @Override
+    @Transactional
+    public SysFileInfoVO deleteSysFileInfo(Long fileId) {
+        SysFileInfo sysFileInfo = sysFileInfoMapper.selectSysFileInfoById(fileId);
+        if (Objects.isNull(sysFileInfo)) {
+            throw new ServiceException("文件不存在");
+        }
+//        // 判断是否为文件夹 如果是文件夹遍历删除文件
+//        if (sysFileInfo.getDataType() != 1) {
+//            sysFileInfoMapper.deleteSysFileInfo(sysFileInfo.getId());
+//            MinioUtils.deleteObject(minioClient, minioConfig.getBucketName(), sysFileInfo.getPath());
+//            return mapperFacade.map(sysFileInfo, SysFileInfoVO.class);
+//        }
+
+        List<SysFileInfo> sysFileInfoList = sysFileInfoMapper.selectSysFileInfoByParentDirId(fileId);
+        for (SysFileInfo file : sysFileInfoList) {
+            sysFileInfoMapper.deleteSysFileInfo(file.getId());
+            MinioUtils.deleteObject(minioClient, minioConfig.getBucketName(), file.getPath());
+        }
+        sysFileInfoMapper.deleteSysFileInfo(sysFileInfo.getId());
+        MinioUtils.deleteObject(minioClient, minioConfig.getBucketName(), sysFileInfo.getPath());
+        return mapperFacade.map(sysFileInfo, SysFileInfoVO.class);
     }
 }
