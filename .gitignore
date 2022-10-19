@@ -11,3 +11,4 @@
 *.pid
 *.orig
 minio-admin/src/main/resources/application-dev.yml
+.env.development
