@@ -56,10 +56,10 @@
                 align="left"
                 min-width="3%">
                 <template slot="header" slot-scope="scope">
-                  <input class="file-check" @click="test" type="checkBox"/>
+                  <input class="file-check" @click="test(scope.row)" type="checkBox"/>
                 </template>
                 <template slot-scope="scope">
-                  <input class="file-check" type="checkBox"/>
+                  <input class="file-check" @click="showFileDetails(scope.row)" type="checkBox"/>
                 </template>
               </el-table-column>
               <el-table-column
@@ -89,7 +89,8 @@ export default {
   name: "Home",
   data() {
     return {
-      fileBodyWidth: '100%',
+      // fileBodyWidth: '100%',
+      fileDetails: false,
       folder: {
         name: 'public',
         createTime: '2022-10-11-10:00',
@@ -125,17 +126,19 @@ export default {
 
   methods: {
     test() {
-      if (this.fileBodyWidth == '80%') {
-        this.fileBodyWidth = '100%'
-      }else {
-        this.fileBodyWidth = '80%'
-      }
-      console.log(this.fileBodyWidth)
+      console.log('this is test function')
+    },
+    showFileDetails(id) {
+      console.log(id)
+      this.fileDetails = this.fileDetails ? false : true;
     }
+
   },
 
   computed: {
-
+    fileBodyWidth() {
+      return this.fileDetails ? '80%' : '100%';
+    }
   }
 }
 </script>
