@@ -85,7 +85,11 @@
 </template>
 
 <script>
+ import { getFileList } from '@/api/fileOperation';
+
+
 export default {
+ 
   name: "Home",
   data() {
     return {
@@ -125,8 +129,21 @@ export default {
       ]
     }
   },
+  created() {
+    this.init()
+  },
 
   methods: {
+
+    async init() {
+      console.log('init.....')
+      console.log(process.env.VUE_APP_BASE_URL)
+
+
+      const {data} = await getFileList(-1)
+      console.log(data)
+    },
+
     test() {
       console.log('this is test function')
     },
