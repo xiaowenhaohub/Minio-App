@@ -90,6 +90,8 @@ export default {
   data() {
     return {
       // fileBodyWidth: '100%',
+
+      
       fileDetails: false,
       folder: {
         name: 'public',
