@@ -17,8 +17,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
- .app {
-  height: 100%;
+.app {
+  ß height: 100%;
   width: 100%;
 }
 
@@ -33,7 +33,7 @@ export default {
   width: 100%;
   left: 0;
   // position: fixed;
-  box-shadow: rgb(0 0 0 / 8%) 0 3px 10px;
+    box-shadow: rgb(0 0 0 / 8%) 0 3px 10px;
   min-height: 83px;
   background-color: #fff;
 }
