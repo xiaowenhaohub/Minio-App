@@ -1,5 +1,7 @@
 package com.minio.file.domain.vo;
 
+import java.util.Date;
+
 /**
  * @author 小问号
  * @date 2022/10/14 13
@@ -42,6 +44,17 @@ public class SysFileInfoVO {
      * 文件路径
      */
     private String path;
+
+    /**
+     * 创建时间
+     */
+    private String createTime;
+
+    /**
+     * 文件数量(文件夹)
+     */
+    private Integer fileNum;
+
 
     public Long getId() {
         return id;
@@ -99,6 +112,22 @@ public class SysFileInfoVO {
         this.path = path;
     }
 
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
+    }
+
+    public Integer getFileNum() {
+        return fileNum;
+    }
+
+    public void setFileNum(Integer fileNum) {
+        this.fileNum = fileNum;
+    }
+
     @Override
     public String toString() {
         return "SysFileInfoVO{" +
@@ -109,6 +138,8 @@ public class SysFileInfoVO {
                 ", ext='" + ext + '\'' +
                 ", size='" + size + '\'' +
                 ", path='" + path + '\'' +
+                ", createTime='" + createTime + '\'' +
+                ", fileNum=" + fileNum +
                 '}';
     }
 }

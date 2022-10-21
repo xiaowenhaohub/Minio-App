@@ -4,10 +4,10 @@
         <div class="mi-file-header">
           <div style="flex: 1; display: flex; justify-content: left; align-items: center;">
             <div style="font-size: 30px; margin-left: 20px; margin-right: 15px;"><i class="el-icon-folder"></i></div>
-            <div style="font-size: 19px;margin-right: 40px;">{{folder.name}}</div>
-            <div class="mi-file-header-meta">创建时间: {{folder.createTime}}</div>
-            <div class="mi-file-header-meta">文件数量: {{folder.num}}</div>
-            <div class="mi-file-header-meta">文件夹大小: {{folder.size}} MiB</div>
+            <div style="font-size: 19px;margin-right: 40px;">{{dirInfo.fileName}}</div>
+            <div class="mi-file-header-meta">创建时间: {{dirInfo.createTime}}</div>
+            <div class="mi-file-header-meta">文件数量: {{dirInfo.fileNum}}</div>
+            <div class="mi-file-header-meta">文件夹大小: {{dirInfo.size}}</div>
           </div>
           <div style="flex: 1;display: flex; justify-content: right; align-items: center;">
               <button class="mi-file-refresh">
@@ -39,7 +39,7 @@
                 </button>
                 
                 <div class="mi-text-back">
-                  <a class="mi-file-path" href="/buckets/public/browse">{{folder.path}}</a>
+                  <a class="mi-file-path" href="/buckets/public/browse">{{dirInfo.path}}</a>
                 </div>
               </div>
               <button class="body-header-button">创建新路径</button>
@@ -62,13 +62,31 @@
                   <input class="file-check" @click="showFileDetails(scope.row)" type="checkBox"/>
                 </template>
               </el-table-column>
+
               <el-table-column
-                prop="name"
+                align="left"
+                min-width="30%">
+                <template slot="header" slot-scope="scope">
+                  <div>Name</div>
+                </template>
+
+                <template slot-scope="scope">
+                  <div class="file-name">
+                    <div style="font-size: 15px;">
+                      <i  :class="getFileImage(scope.row)"></i>
+                    </div>
+                    <div>&nbsp{{scope.row.fileName}}</div>
+                  </div>
+                </template>
+              </el-table-column>
+<!-- 
+              <el-table-column
+                prop="fileName"
                 label="Name"
                 min-width="30%">
-              </el-table-column>
+              </el-table-column> -->
               <el-table-column
-                prop="date"
+                prop="createTime"
                 label="Last Modified"
                 min-width="30%">
               </el-table-column>
@@ -97,36 +115,8 @@ export default {
 
       
       fileDetails: false,
-      folder: {
-        name: 'public',
-        createTime: '2022-10-11-10:00',
-        path: 'public',
-        size: 20,
-        num: 7
-      },
-      fileList: [
-      {
-          id: 1,
-          date: '2016-05-03',
-          name: '王小虎',
-          size: 200333
-        }, {
-          id: 2,
-          date: '2016-05-02',
-          name: '王小虎',
-          size: 200333
-        }, {
-          id: 3,
-          date: '2016-05-04',
-          name: '王小虎',
-          size: 200333
-        }, {
-          id: 4,
-          date: '2016-05-01',
-          name: '王小虎',
-          size: 200333
-        },
-      ]
+      dirInfo: {},
+      fileList: []
     }
   },
   created() {
@@ -135,13 +125,14 @@ export default {
 
   methods: {
 
-    async init() {
+    init() {
       console.log('init.....')
-      console.log(process.env.VUE_APP_BASE_URL)
-
-
-      const {data} = await getFileList(-1)
-      console.log(data)
+      //获取root文件列表
+      getFileList(-1).then(response => {
+        this.fileList = response.data.fileList
+        this.dirInfo = response.data.dirInfo
+      })
+      // console.log(data)
     },
 
     test() {
@@ -157,12 +148,37 @@ export default {
   computed: {
     fileBodyWidth() {
       return this.fileDetails ? '80%' : '100%';
+    },
+
+    getFileImage() {
+      return function(row) {
+
+        switch(row.ext.toLowerCase()) {
+          case 'image':
+            return 'el-icon-picture-outline'
+          case 'video':
+            return 'el-icon-picture-outline'
+          case 'doc':
+            return ;
+          case 'zip':
+            return ;
+          default:
+            return ;
+        }
+
+      }
     }
   }
 }
 </script>
 
 <style scoped>
+
+  .file-name {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+  }
  
   .el-table {
     font-size: 12px;
@@ -181,7 +197,7 @@ export default {
     padding-left: 1%;
   }
 
-.mi-file-path:hover {
+  .mi-file-path:hover {
     text-decoration: underline;
   }
 

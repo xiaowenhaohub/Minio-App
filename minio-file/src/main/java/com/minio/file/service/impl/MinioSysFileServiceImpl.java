@@ -1,17 +1,18 @@
 package com.minio.file.service.impl;
 
 import com.minio.common.exception.ServiceException;
+import com.minio.common.utils.DateUtils;
 import com.minio.common.utils.SnowFlakeUtils;
 import com.minio.file.config.MinioConfig;
 import com.minio.file.constant.DataTypeConstant;
 import com.minio.file.domain.SysFile;
 import com.minio.file.domain.SysFileInfo;
-import com.minio.file.domain.vo.SysDirInfoVO;
 import com.minio.file.domain.vo.SysFileInfoVO;
 import com.minio.file.mapper.SysFileInfoMapper;
 import com.minio.file.service.SysFileService;
 import com.minio.file.utils.FileTypeUtils;
 import com.minio.file.utils.FileUploadUtils;
+import com.minio.file.utils.FileUtils;
 import com.minio.file.utils.MinioUtils;
 import io.minio.ListObjectsArgs;
 import io.minio.MinioClient;
@@ -97,26 +98,33 @@ public class MinioSysFileServiceImpl implements SysFileService {
     @Override
     public List<SysFileInfoVO> querySysFileList(Long dirId) {
         List<SysFileInfo> sysFileInfoList = sysFileInfoMapper.selectSysFileInfoByParentDirId(dirId);
-        return mapperFacade.mapAsList(sysFileInfoList, SysFileInfoVO.class);
+        List<SysFileInfoVO> data = new ArrayList<>();
+        for (SysFileInfo file : sysFileInfoList) {
+            SysFileInfoVO fileVO = mapperFacade.map(file, SysFileInfoVO.class);
+            fileVO.setCreateTime(DateUtils.parseDateToStr("yyyy-MM-dd HH:mm",file.getCreateTime()));
+            fileVO.setSize(FileUtils.getFileSize(file.getSize()));
+            data.add(fileVO);
+        }
+        return data;
     }
 
     @Override
-    public SysDirInfoVO queryDirInfo(Long dirId) {
+    public SysFileInfoVO queryDirInfo(Long dirId) {
 
         SysFileInfo sysFileInfo = sysFileInfoMapper.selectSysFileInfoById(dirId);
 
         if (Objects.isNull(sysFileInfo) || sysFileInfo.getDataType() != 1) {
             throw new ServiceException("没有该文件夹");
         }
-        SysDirInfoVO sysDirInfoVO = mapperFacade.map(sysFileInfo, SysDirInfoVO.class);
-
-        sysDirInfoVO.setFileNum(sysFileInfoMapper.querySysFileInfoNum(dirId));
-        return sysDirInfoVO;
+        SysFileInfoVO sysFileInfoVO = mapperFacade.map(sysFileInfo, SysFileInfoVO.class);
+        sysFileInfoVO.setCreateTime(DateUtils.parseDateToStr("yyyy-MM-dd HH:mm",sysFileInfo.getCreateTime()));
+        sysFileInfoVO.setFileNum(sysFileInfoMapper.querySysFileInfoNum(dirId));
+        return sysFileInfoVO;
     }
 
     @Override
     @Transactional
-    public SysDirInfoVO createDir(Long parentDirId, String dirName) {
+    public SysFileInfoVO createDir(Long parentDirId, String dirName) {
         SysFileInfo sysFileInfo = sysFileInfoMapper.selectSysFileInfoById(parentDirId);
 
         if (Objects.isNull(sysFileInfo) || sysFileInfo.getDataType() != 1) {
@@ -135,9 +143,9 @@ public class MinioSysFileServiceImpl implements SysFileService {
         sysFileInfo.setSize(0L);
         sysFileInfo.setParentDirId(parentDirId);
         sysFileInfoMapper.insertSysFileInfo(sysFileInfo);
-        SysDirInfoVO sysDirInfoVO = mapperFacade.map(sysFileInfo, SysDirInfoVO.class);
-        sysDirInfoVO.setFileNum(0);
-        return sysDirInfoVO;
+        SysFileInfoVO sysFileInfoVO = mapperFacade.map(sysFileInfo, SysFileInfoVO.class);
+        sysFileInfoVO.setFileNum(0);
+        return sysFileInfoVO;
     }
 
     @Override

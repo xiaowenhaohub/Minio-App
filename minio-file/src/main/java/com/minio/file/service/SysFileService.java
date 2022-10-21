@@ -2,7 +2,6 @@ package com.minio.file.service;
 
 import com.minio.file.domain.SysFile;
 import com.minio.file.domain.SysFileInfo;
-import com.minio.file.domain.vo.SysDirInfoVO;
 import com.minio.file.domain.vo.SysFileInfoVO;
 import io.minio.Result;
 import io.minio.messages.Item;
@@ -38,14 +37,14 @@ public interface SysFileService {
      * @param dirId
      * @return
      */
-    SysDirInfoVO queryDirInfo(Long dirId);
+    SysFileInfoVO queryDirInfo(Long dirId);
 
     /**
      * 创建文件夹
      * @param dirName
      * @return
      */
-    SysDirInfoVO createDir(Long parentDirId, String dirName);
+    SysFileInfoVO createDir(Long parentDirId, String dirName);
 
     /**
      * 查询文件详情

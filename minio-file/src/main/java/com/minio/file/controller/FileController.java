@@ -8,7 +8,6 @@ import com.minio.common.core.AjaxResult;
 import com.minio.common.exception.ServiceException;
 import com.minio.file.constant.SysConstant;
 import com.minio.file.domain.SysFile;
-import com.minio.file.domain.vo.SysDirInfoVO;
 import com.minio.file.domain.vo.SysFileInfoVO;
 import com.minio.file.service.SysFileService;
 import com.minio.file.utils.FileUtils;
@@ -59,11 +58,11 @@ public class FileController {
     @ApiOperation("查询文件列表")
     @Log(title = "查询文件列表")
     public AjaxResult getFileList(@PathVariable Long dirId) {
-        SysDirInfoVO sysFileInfoVO = sysFileService.queryDirInfo(dirId);
+        SysFileInfoVO sysFileInfoVO = sysFileService.queryDirInfo(dirId);
         List<SysFileInfoVO> fileList = sysFileService.querySysFileList(dirId);
         JSONObject object = new JSONObject();
         object.put("dirInfo",sysFileInfoVO);
-        object.put("FileList",fileList);
+        object.put("fileList",fileList);
         return AjaxResult.success("查询成功", object);
     }
 
