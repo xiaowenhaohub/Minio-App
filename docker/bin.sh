@@ -49,9 +49,6 @@ case "$1" in
 "stop")
   stop
 ;;
-"rm")
-  rm
-;;
 "send")
   send $2
 ;;
