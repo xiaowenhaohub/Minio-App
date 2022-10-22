@@ -20,13 +20,12 @@
           <div class="mi-file-header-meta">文件数量: {{ dirInfo.fileNum }}</div>
           <div class="mi-file-header-meta">文件夹大小: {{ dirInfo.size }}</div>
         </div>
-        <div style="
-            flex: 1;
+        <div style=" flex: 1;
             display: flex;
             justify-content: right;
             align-items: center;
           ">
-          <button @click="Refresh" class="mi-file-refresh">
+          <button @click="Refresh()" class="mi-file-refresh">
             <span>Refresh</span>
             <svg style="width: 14px; height: 14px; margin-left: 8px" xmlns="http://www.w3.org/2000/svg" class="min-icon"
               fill="currentcolor" viewBox="0 0 256 256">
@@ -91,79 +90,88 @@
           </el-dropdown>
         </div>
       </div>
-      <div class="mi-file-body" :style="{ width: fileBodyWidth }">
-        <div class="body-header">
-          <div style="display: flex; width: 98%; height: 70%">
-            <div class="body-header-left">
-              <button class="mi-button-back">
-                <svg style="width: 16px; min-width: 16px" xmlns="http://www.w3.org/2000/svg" class="min-icon"
-                  fill="currentcolor" viewBox="0 0 256 256">
-                  <g id="noun_chevron_2320228" transform="translate(5.595 10) rotate(180)">
-                    <path id="Path_6842"
-                      d="M-178.01,7.8c-3.9-0.03-7.62-1.63-10.34-4.43c-5.81-5.68-5.92-15-0.25-20.81 c0.08-0.08,0.16-0.16,0.25-0.25l100.13-100.13l-100.13-100.48c-5.81-5.68-5.92-15-0.25-20.81c0.08-0.08,0.16-0.16,0.25-0.25 c5.68-5.81,15-5.92,20.81-0.25c0.08,0.08,0.16,0.16,0.25,0.25l110.82,110.82c2.8,2.72,4.39,6.44,4.43,10.34 c0.11,3.93-1.51,7.71-4.43,10.34L-167.29,2.99C-170.07,5.97-173.93,7.71-178.01,7.8z">
-                    </path>
-                  </g>
-                </svg>
-              </button>
+      <div class="mi-file-body" >
+        <div class="mi-file-body-list" style="height: 100%;" :style="{ width: fileBodyWidth }">
+          <div class="body-header">
+            <div style="display: flex; width: 98%; height: 70%">
+              <div class="body-header-left">
+                <button class="mi-button-back">
+                  <svg style="width: 16px; min-width: 16px" xmlns="http://www.w3.org/2000/svg" class="min-icon"
+                    fill="currentcolor" viewBox="0 0 256 256">
+                    <g id="noun_chevron_2320228" transform="translate(5.595 10) rotate(180)">
+                      <path id="Path_6842"
+                        d="M-178.01,7.8c-3.9-0.03-7.62-1.63-10.34-4.43c-5.81-5.68-5.92-15-0.25-20.81 c0.08-0.08,0.16-0.16,0.25-0.25l100.13-100.13l-100.13-100.48c-5.81-5.68-5.92-15-0.25-20.81c0.08-0.08,0.16-0.16,0.25-0.25 c5.68-5.81,15-5.92,20.81-0.25c0.08,0.08,0.16,0.16,0.25,0.25l110.82,110.82c2.8,2.72,4.39,6.44,4.43,10.34 c0.11,3.93-1.51,7.71-4.43,10.34L-167.29,2.99C-170.07,5.97-173.93,7.71-178.01,7.8z">
+                      </path>
+                    </g>
+                  </svg>
+                </button>
 
-              <div class="mi-text-back">
-                <a class="mi-file-path" href="/buckets/public/browse">{{
-                dirInfo.path
-                }}</a>
+                <div class="mi-text-back">
+                  <a class="mi-file-path" href="/buckets/public/browse">{{
+                  dirInfo.path
+                  }}</a>
+                </div>
               </div>
+              <button class="body-header-button" @click="showCreateFolderDialog()">
+                创建文件夹
+              </button>
             </div>
-            <button class="body-header-button" @click="createFolder()">
-              创建文件夹
-            </button>
+          </div>
+          <div class="body-table">
+            <el-table v-loading="loading" element-stroke="#EAEDEE" :data="fileList" style="width: 98%" :header-cell-style="{
+              fontSize: '14px',
+              fontWeight: '700',
+              fontFamily: 'Lato, sans-serif',
+              color: 'black',
+            }" height="100%" 
+            :row-style="{ height: '10px' }"
+            @row-click="clickFileRow"
+            >
+              <el-table-column align="left" min-width="3%">
+                <template slot="header" slot-scope="scope">
+                  <input class="file-check" @click="test(scope.row)" type="checkBox" />
+                </template>
+                <template slot-scope="scope">
+                  <input class="file-check" @click="showFileDetails(scope.row)" type="checkBox" />
+                </template>
+              </el-table-column>
+
+              <el-table-column align="left" min-width="30%">
+                <template slot="header" slot-scope="scope">
+                  <div>Name</div>
+                </template>
+
+                <template slot-scope="scope">
+                  <div class="file-name">
+                    <div style="font-size: 15px">
+                      <i :class="getFileImage(scope.row)"></i>
+                    </div>
+                    <div>&nbsp{{ scope.row.fileName }}</div>
+                  </div>
+                </template>
+              </el-table-column>
+              <!-- 
+                <el-table-column
+                  prop="fileName"
+                  label="Name"
+                  min-width="30%">
+                </el-table-column> -->
+              <el-table-column prop="createTime" label="Last Modified" min-width="30%">
+              </el-table-column>
+              <el-table-column prop="size" label="Size" min-width="10%">
+              </el-table-column>
+            </el-table>
           </div>
         </div>
-        <div class="body-table">
-          <el-table v-loading="loading" element-stroke="#EAEDEE" :data="fileList" style="width: 98%" :header-cell-style="{
-            fontSize: '14px',
-            fontWeight: '700',
-            fontFamily: 'Lato, sans-serif',
-            color: 'black',
-          }" height="100%" :row-style="{ height: '10px' }">
-            <el-table-column align="left" min-width="3%">
-              <template slot="header" slot-scope="scope">
-                <input class="file-check" @click="test(scope.row)" type="checkBox" />
-              </template>
-              <template slot-scope="scope">
-                <input class="file-check" @click="showFileDetails(scope.row)" type="checkBox" />
-              </template>
-            </el-table-column>
-
-            <el-table-column align="left" min-width="30%">
-              <template slot="header" slot-scope="scope">
-                <div>Name</div>
-              </template>
-
-              <template slot-scope="scope">
-                <div class="file-name">
-                  <div style="font-size: 15px">
-                    <i :class="getFileImage(scope.row)"></i>
-                  </div>
-                  <div>&nbsp{{ scope.row.fileName }}</div>
-                </div>
-              </template>
-            </el-table-column>
-            <!-- 
-              <el-table-column
-                prop="fileName"
-                label="Name"
-                min-width="30%">
-              </el-table-column> -->
-            <el-table-column prop="createTime" label="Last Modified" min-width="30%">
-            </el-table-column>
-            <el-table-column prop="size" label="Size" min-width="10%">
-            </el-table-column>
-          </el-table>
+        <div class="mi-file-details" :style="{width: fileDetailsWidth}">
+        
+        
         </div>
       </div>
+    
     </div>
 
-    <el-dialog top="0vh" title="提示" :close-on-click-modal="false" :visible.sync="createFolderDialog"
-      :before-close="handleClose">
+    <el-dialog top="0vh" title="提示" :close-on-click-modal="false" :visible.sync="createFolderDialog">
       <div class="create-folder-body">
         <div style="
             flex: 1;
@@ -179,11 +187,11 @@
         <div style="flex: 1;display: flex;width: 100%;align-items: center;">
           <div class="mi-font" style="width: 20%;font-weight: 400; color: #07193E;margin-left: 5%;">
             新文件夹名*</div>
-          <input type="text" placeholder="输入文件夹名" class="mi-input" maxlength="16" />
+          <input type="text" placeholder="输入文件夹名" class="mi-input" maxlength="16" v-model="newFolderName" />
         </div>
         <div style="flex: 1;display: flex;width: 100%;justify-content: right;align-items: center;padding-right: 20%;">
-          <button class="clear-button mi-button">清除</button>
-          <button class="mi-button confirm-button" disabled>确定</button>
+          <button class="clear-button mi-button" @click="showCreateFolderDialog()">取消</button>
+          <button class="mi-button confirm-button" @click="createFolder()" :disabled="hasInputFolderName">确定</button>
         </div>
       </div>
     </el-dialog>
@@ -191,12 +199,13 @@
 </template>
 
 <script>
-import { getFileList } from "@/api/fileOperation";
+import { getFileList, createFolder } from "@/api/fileOperation";
 
 export default {
   name: "Home",
   data() {
     return {
+      newFolderName: '',
       // fileBodyWidth: '100%',
       createFolderDialog: false,
       loading: true,
@@ -216,26 +225,26 @@ export default {
     init() {
       console.log("init.....");
       //获取root文件列表
-      getFileList(-1).then((response) => {
-        this.fileList = response.data.fileList;
-        this.dirInfo = response.data.dirInfo;
-        this.loading = false;
-      });
+      this.Refresh(-1)
       // console.log(data)
     },
 
     /**
      * 刷新
      */
-    Refresh() {
+    Refresh(id) {
       console.log("Refresh....");
       this.loading = true;
-      getFileList(this.dirInfo.id).then((response) => {
+      id = id == null ? this.dirInfo.id : id;
+      getFileList(id).then((response) => {
         this.fileList = response.data.fileList;
         this.dirInfo = response.data.dirInfo;
         this.loading = false;
+
       });
     },
+
+    
 
     /**
      * 测试
@@ -245,25 +254,68 @@ export default {
     },
 
     /**
+     * 显示创建文件夹弹窗
+     */
+    showCreateFolderDialog() {
+      this.createFolderDialog = this.createFolderDialog ? false : true;
+    },
+
+    /**
      * 创建文件夹
      */
     createFolder() {
-      this.createFolderDialog = true;
+      this.loading = true;
+      this.showCreateFolderDialog()
+      createFolder(this.dirInfo.id, this.newFolderName).then(response => {
+        this.loading = false;
+      })
     },
 
+    /**
+     * 
+     * @param {显示多个文件详情} id 
+     */
     showFileDetails(id) {
       console.log(id);
       this.fileDetails = this.fileDetails ? false : true;
     },
+
+    /**
+     * 
+     * @param {显示多个文件详情} row 
+     */
+    showOneFileDetails(row) {
+      console.log('showFileDetails',row)
+      this.fileDetails = true
+
+    },
+    
+    /**
+     * 文件点击事件
+     * 
+     * @param {文件点击事件} row 
+     */
+    clickFileRow(row) {
+      console.log(row)
+      if (row.dataType == 1) this.Refresh(row.id)
+      this.showOneFileDetails(row)
+    }
   },
 
   computed: {
     fileBodyWidth() {
-      return this.fileDetails ? "80%" : "100%";
+      return this.fileDetails ? "85%" : "100%";
+    },
+    fileDetailsWidth() {
+      return this.fileDetails ? "15%" : "0%";
+    },
+    hasInputFolderName() {
+      return this.newFolderName == '' ? true : false;
     },
 
     getFileImage() {
       return function (row) {
+        if (row.dataType==1) return 'el-icon-folder'
         switch (row.ext.toLowerCase()) {
           case "image":
             return "el-icon-picture-outline";
@@ -300,6 +352,13 @@ export default {
   background-color: rgb(7, 25, 62);
   color: rgb(255, 255, 255);
 }
+
+.confirm-button:disabled {
+    cursor: not-allowed;
+    background-color: rgb(231, 234, 235);
+    border: 1px solid rgb(231, 234, 235);
+    color: rgb(91, 92, 92);
+  }
 
 .mi-button {
   border-radius: 3px;
@@ -362,7 +421,7 @@ export default {
 
 .el-dialog {
   width: 100%;
-  height: 30%;
+  height: 20%;
   background-color: rgb(255, 255, 255);
   color: rgba(0, 0, 0, 0.87);
   transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
@@ -546,6 +605,21 @@ export default {
   transition: width 0.5s;
   -webkit-transition: width 0.5s;
   height: 90%;
+  /* background-color: #969FA8; */
+  border-right: #eaedee 1px solid;
+  
+  display: flex;
+  
+}
+.mi-file-body-list {
+  transition: width 0.5s;
+  -webkit-transition: width 0.5s;
+  /* background-color: #969FA8; */
+  border-right: #eaedee 1px solid;
+}
+.mi-file-details {
+  transition: width 0.5s;
+  -webkit-transition: width 0.5s;
   /* background-color: #969FA8; */
   border-right: #eaedee 1px solid;
 }

@@ -2,8 +2,15 @@ import request from '@/utils/request'
 
 // 查询文件列表
 export function getFileList(dirId) {
-    return request({
-      url: '/file/list/' + dirId,
-      method: 'get'
-    })
+  return request({
+    url: '/file/list/' + dirId,
+    method: 'get'
+  })
+}
+
+export function createFolder(parentDirId, folderName) {
+  return request({
+    url: '/file/create/' + parentDirId + '/' + folderName,
+    method: 'get'
+  })
 }
