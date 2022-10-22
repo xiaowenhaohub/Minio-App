@@ -90,7 +90,7 @@
           </el-dropdown>
         </div>
       </div>
-      <div class="mi-file-body" >
+      <div class="mi-file-body">
         <div class="mi-file-body-list" style="height: 100%;" :style="{ width: fileBodyWidth }">
           <div class="body-header">
             <div style="display: flex; width: 98%; height: 70%">
@@ -118,15 +118,13 @@
             </div>
           </div>
           <div class="body-table">
-            <el-table v-loading="loading" element-stroke="#EAEDEE" :data="fileList" style="width: 98%" :header-cell-style="{
-              fontSize: '14px',
-              fontWeight: '700',
-              fontFamily: 'Lato, sans-serif',
-              color: 'black',
-            }" height="100%" 
-            :row-style="{ height: '10px' }"
-            @row-click="clickFileRow"
-            >
+            <el-table v-loading="loading" element-stroke="#EAEDEE" :data="fileList" style="width: 98%"
+              :header-cell-style="{
+                fontSize: '14px',
+                fontWeight: '700',
+                fontFamily: 'Lato, sans-serif',
+                color: 'black',
+              }" height="100%" :row-style="{ height: '10px' }" @row-click="clickFileRow">
               <el-table-column align="left" min-width="3%">
                 <template slot="header" slot-scope="scope">
                   <input class="file-check" @click="test(scope.row)" type="checkBox" />
@@ -164,11 +162,11 @@
           </div>
         </div>
         <div class="mi-file-details" :style="{width: fileDetailsWidth}">
-        
-        
+          <div class="file-details-loading" :style="{display: isHiddenFileDetailsLoading }"></div>
+
         </div>
       </div>
-    
+
     </div>
 
     <el-dialog top="0vh" title="提示" :close-on-click-modal="false" :visible.sync="createFolderDialog">
@@ -199,7 +197,7 @@
 </template>
 
 <script>
-import { getFileList, createFolder } from "@/api/fileOperation";
+import { getFileList, createFolder, getFileDetails } from "@/api/fileOperation";
 
 export default {
   name: "Home",
@@ -212,6 +210,7 @@ export default {
       fileDetails: false,
       dirInfo: {},
       fileList: [],
+      fileDetailsLoding: false
     };
   },
   created() {
@@ -239,12 +238,13 @@ export default {
       getFileList(id).then((response) => {
         this.fileList = response.data.fileList;
         this.dirInfo = response.data.dirInfo;
+        this.fileDetails = false
         this.loading = false;
 
       });
     },
 
-    
+
 
     /**
      * 测试
@@ -285,11 +285,15 @@ export default {
      * @param {显示多个文件详情} row 
      */
     showOneFileDetails(row) {
-      console.log('showFileDetails',row)
+      console.log('showFileDetails', row)
       this.fileDetails = true
-
+      this.fileDetailsLoding = true
+      getFileDetails(row.id).then(response => {
+        console.log(response)
+        this.fileDetailsLoding = false
+      })
     },
-    
+
     /**
      * 文件点击事件
      * 
@@ -297,7 +301,9 @@ export default {
      */
     clickFileRow(row) {
       console.log(row)
-      if (row.dataType == 1) this.Refresh(row.id)
+      if (row.dataType == 1) {
+        this.Refresh(row.id)
+      }
       this.showOneFileDetails(row)
     }
   },
@@ -312,10 +318,13 @@ export default {
     hasInputFolderName() {
       return this.newFolderName == '' ? true : false;
     },
+    isHiddenFileDetailsLoading() {
+      return this.fileDetailsLoding ? 'block' : 'none';
+    },
 
     getFileImage() {
       return function (row) {
-        if (row.dataType==1) return 'el-icon-folder'
+        if (row.dataType == 1) return 'el-icon-folder'
         switch (row.ext.toLowerCase()) {
           case "image":
             return "el-icon-picture-outline";
@@ -354,11 +363,11 @@ export default {
 }
 
 .confirm-button:disabled {
-    cursor: not-allowed;
-    background-color: rgb(231, 234, 235);
-    border: 1px solid rgb(231, 234, 235);
-    color: rgb(91, 92, 92);
-  }
+  cursor: not-allowed;
+  background-color: rgb(231, 234, 235);
+  border: 1px solid rgb(231, 234, 235);
+  color: rgb(91, 92, 92);
+}
 
 .mi-button {
   border-radius: 3px;
@@ -607,21 +616,25 @@ export default {
   height: 90%;
   /* background-color: #969FA8; */
   border-right: #eaedee 1px solid;
-  
+
   display: flex;
-  
+
 }
+
 .mi-file-body-list {
   transition: width 0.5s;
   -webkit-transition: width 0.5s;
   /* background-color: #969FA8; */
   border-right: #eaedee 1px solid;
 }
+
 .mi-file-details {
   transition: width 0.5s;
   -webkit-transition: width 0.5s;
   /* background-color: #969FA8; */
   border-right: #eaedee 1px solid;
+  display: flex;
+  justify-content: center;
 }
 
 .mi-file-header {
@@ -699,5 +712,55 @@ export default {
 
 .el-dialog__header {
   display: none;
+}
+
+
+
+.file-details-loading {
+  display: block;
+  position: absolute;
+  width: 6px;
+  height: 10px;
+  margin-top: 5%;
+
+  animation: rectangle infinite 1s ease-in-out -0.2s;
+
+  background-color: #000;
+}
+
+.file-details-loading:before,
+.file-details-loading:after {
+  position: absolute;
+  width: 6px;
+  height: 10px;
+  content: "";
+  background-color: #000;
+}
+
+.file-details-loading:before {
+  left: -14px;
+
+  animation: rectangle infinite 1s ease-in-out -0.4s;
+}
+
+.file-details-loading:after {
+  right: -14px;
+
+  animation: rectangle infinite 1s ease-in-out;
+}
+
+@keyframes rectangle {
+
+  0%,
+  80%,
+  100% {
+    height: 20px;
+    box-shadow: 0 0 #000;
+  }
+
+  40% {
+    height: 30px;
+    box-shadow: 0 -20px #000;
+  }
 }
 </style>

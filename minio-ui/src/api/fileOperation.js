@@ -14,3 +14,10 @@ export function createFolder(parentDirId, folderName) {
     method: 'get'
   })
 }
+
+export function getFileDetails(fileId) {
+  return request({
+    url: 'file/query/' + fileId,
+    method: 'get'
+  })
+}
