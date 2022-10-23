@@ -14,11 +14,11 @@
           <div style="font-size: 19px; margin-right: 40px">
             {{ dirInfo.fileName }}
           </div>
-          <div class="mi-file-header-meta">
+          <div v-if="dirInfo != null" class="mi-file-header-meta">
             创建时间: {{ dirInfo.createTime }}
           </div>
-          <div class="mi-file-header-meta">文件数量: {{ dirInfo.fileNum }}</div>
-          <div class="mi-file-header-meta">文件夹大小: {{ dirInfo.size }}</div>
+          <div v-if="dirInfo != null" class="mi-file-header-meta">文件数量: {{ dirInfo.fileNum }}</div>
+          <div v-if="dirInfo != null" class="mi-file-header-meta">文件夹大小: {{ dirInfo.size }}</div>
         </div>
         <div style=" flex: 1;
             display: flex;
@@ -108,7 +108,7 @@
 
                 <div class="mi-text-back">
                   <a class="mi-file-path" href="/buckets/public/browse">{{
-                  dirInfo.path
+                      dirInfo.path
                   }}</a>
                 </div>
               </div>
@@ -162,13 +162,13 @@
           </div>
         </div>
         <div class="mi-file-details"
-          :style="{width: fileDetailsWidth, borderLeft : showFileInfo ? '#eaedee 1px solid' : ''}">
-          <div class="file-details-loading" :style="{display: isHiddenFileDetailsLoading  }"></div>
+          :style="{ width: fileDetailsWidth, borderLeft: showFileInfo ? '#eaedee 1px solid' : '' }">
+          <div class="file-details-loading" :style="{ display: isHiddenFileDetailsLoading }"></div>
 
-          <div class="mi-file-details" :style="{width: '100%', height: '100%', display: showFileInfo ? '' : 'none',}">
+          <div class="mi-file-details" :style="{ width: '100%', height: '100%', display: showFileInfo ? '' : 'none', }">
             <div style="width:80%;font-size: 14px;display: flex;align-items: center;">
-              <span
-                style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;">{{fileDetails.fileName}}</span>
+              <span style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;">{{ fileDetails.fileName
+              }}</span>
             </div>
             <ul class="file-action">
               <li>Actions:</li>
@@ -258,7 +258,7 @@ export default {
       createFolderDialog: false,
       loading: true,
       showFileDetails: false,
-      dirInfo: {},
+      dirInfo: null,
       fileList: [],
       fileDetailsLoding: false,
       fileDetails: {},
