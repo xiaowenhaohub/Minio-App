@@ -130,7 +130,7 @@
                   <input class="file-check" @click="test(scope.row)" type="checkBox" />
                 </template>
                 <template slot-scope="scope">
-                  <input class="file-check" @click="showFileDetails(scope.row)" type="checkBox" />
+                  <input class="file-check" @click.stop="showFileDetails(scope.row)" type="checkBox" />
                 </template>
               </el-table-column>
 
@@ -161,8 +161,58 @@
             </el-table>
           </div>
         </div>
-        <div class="mi-file-details" :style="{width: fileDetailsWidth}">
-          <div class="file-details-loading" :style="{display: isHiddenFileDetailsLoading }"></div>
+        <div class="mi-file-details"
+          :style="{width: fileDetailsWidth, borderLeft : showFileInfo ? '#eaedee 1px solid' : ''}">
+          <div class="file-details-loading" :style="{display: isHiddenFileDetailsLoading  }"></div>
+
+          <div class="mi-file-details" :style="{width: '100%', height: '100%', display: showFileInfo ? '' : 'none',}">
+            <div style="width:80%;font-size: 14px;display: flex;align-items: center;">
+              <span
+                style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;">{{fileDetails.fileName}}</span>
+            </div>
+            <ul class="file-action">
+              <li>Actions:</li>
+
+              <li>
+                <button>
+                  <i class="el-icon-download"></i>
+                  <div style="width:3px"></div>Download
+                </button>
+              </li>
+              <li>
+                <button>
+                  <i class="el-icon-share"></i>
+                  <div style="width:3px"></div>Share
+                </button>
+              </li>
+              <li>
+                <button>
+                  <i class="el-icon-postcard"></i>
+                  <div style="width:3px"></div>Preview
+                </button>
+              </li>
+              <li>
+                <button>
+                  <i class="el-icon-scissors"></i>
+                  <div style="width:3px"></div>Rename
+                </button>
+              </li>
+            </ul>
+
+            <div class="file-delete">
+              <button @click="deleteFile()"><svg style="width:14px;margin-right: 10px;"
+                  xmlns="http://www.w3.org/2000/svg" class="min-icon" fill="currentcolor" viewBox="0 0 256 256">
+                  <g id="trash-icn" transform="translate(0 0)">
+                    <path fill="currentcolor"
+                      d="M219.6,16.2h-49.7V8.4c0-3.4-2.7-6.1-6.1-6.1H92.2c-3.4,0-6.1,2.7-6.1,6.1v7.8H36.3 c-3.4,0-6.1,2.8-6.1,6.2V38c0,3.4,2.7,6.1,6.1,6.1h183.3c3.4,0,6.1-2.7,6.1-6.1V22.4C225.8,19,223.1,16.2,219.6,16.2 C219.7,16.2,219.6,16.2,219.6,16.2z">
+                    </path>
+                    <path fill="currentcolor"
+                      d="M44.2,225.5c0,15.6,12.7,28.2,28.2,28.2h111.2c15.6-0.1,28.2-12.7,28.2-28.2V58.1H44.2V225.5z">
+                    </path>
+                  </g>
+                </svg>Delete</button>
+            </div>
+          </div>
 
         </div>
       </div>
@@ -197,7 +247,7 @@
 </template>
 
 <script>
-import { getFileList, createFolder, getFileDetails } from "@/api/fileOperation";
+import { getFileList, createFolder, getFileDetails, deleteFile } from "@/api/fileOperation";
 
 export default {
   name: "Home",
@@ -207,10 +257,12 @@ export default {
       // fileBodyWidth: '100%',
       createFolderDialog: false,
       loading: true,
-      fileDetails: false,
+      showFileDetails: false,
       dirInfo: {},
       fileList: [],
-      fileDetailsLoding: false
+      fileDetailsLoding: false,
+      fileDetails: {},
+      showFileInfo: false
     };
   },
   created() {
@@ -223,6 +275,8 @@ export default {
      */
     init() {
       console.log("init.....");
+      this.showFileDetails = false
+
       //获取root文件列表
       this.Refresh(-1)
       // console.log(data)
@@ -235,14 +289,17 @@ export default {
       console.log("Refresh....");
       this.loading = true;
       id = id == null ? this.dirInfo.id : id;
+
       getFileList(id).then((response) => {
         this.fileList = response.data.fileList;
         this.dirInfo = response.data.dirInfo;
-        this.fileDetails = false
+        this.showFileDetails = false
         this.loading = false;
-
+        this.showFileInfo = false
       });
     },
+
+
 
 
 
@@ -251,6 +308,14 @@ export default {
      */
     test() {
       console.log("this is test function");
+    },
+
+    /**
+     * 删除文件
+     */
+    deleteFile() {
+      deleteFile(this.fileDetails.id)
+      this.Refresh(this.dirInfo.id)
     },
 
     /**
@@ -277,20 +342,26 @@ export default {
      */
     showFileDetails(id) {
       console.log(id);
-      this.fileDetails = this.fileDetails ? false : true;
+      this.showFileDetails = this.showFileDetails ? false : true;
     },
 
     /**
      * 
-     * @param {显示多个文件详情} row 
+     * @param {显示单个文件详情} row 
      */
     showOneFileDetails(row) {
       console.log('showFileDetails', row)
-      this.fileDetails = true
       this.fileDetailsLoding = true
+      this.showFileDetails = true
+      this.showFileInfo = false
+      this.showFileInfo = true
+
       getFileDetails(row.id).then(response => {
         console.log(response)
-        this.fileDetailsLoding = false
+        if (response.code == 200) {
+          this.fileDetails = response.data
+          this.fileDetailsLoding = false
+        }
       })
     },
 
@@ -303,6 +374,7 @@ export default {
       console.log(row)
       if (row.dataType == 1) {
         this.Refresh(row.id)
+        return
       }
       this.showOneFileDetails(row)
     }
@@ -310,10 +382,10 @@ export default {
 
   computed: {
     fileBodyWidth() {
-      return this.fileDetails ? "85%" : "100%";
+      return this.showFileDetails ? "85%" : "100%";
     },
     fileDetailsWidth() {
-      return this.fileDetails ? "15%" : "0%";
+      return this.showFileDetails ? "15%" : "0%";
     },
     hasInputFolderName() {
       return this.newFolderName == '' ? true : false;
@@ -343,7 +415,107 @@ export default {
 };
 </script>
 
-<style >
+<style lang="less" >
+.file-delete {
+  width: 80%;
+
+  button {
+    border-radius: 3px;
+    cursor: pointer;
+    width: 100%;
+    height: 39px;
+    font-family: Lato, sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    display: flex;
+    flex-direction: row;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    justify-content: center;
+    margin: 0px;
+    padding: 0px 25px;
+    transition: all 0.2s linear 0s;
+    background-color: rgb(255, 255, 255);
+    border: 1px solid rgb(197, 27, 63);
+    color: rgb(197, 27, 63);
+  }
+
+  button:hover:not(:disabled) {
+    background-color: rgb(252, 242, 244);
+    border: 1px solid rgb(200, 59, 81);
+    color: rgb(197, 27, 63);
+  }
+}
+
+
+.file-action {
+  margin-top: 20px;
+  color: #696969;
+  border: #F1F1F1 1px solid;
+  margin: 8px 22px;
+  padding: 0;
+  border-radius: 3px;
+  background-color: #F8F8F8;
+  width: 80%;
+  overflow: hidden;
+
+  li:first-of-type {
+    color: #000;
+    padding: 10px;
+    font-weight: bold;
+  }
+
+  li {
+    width: 100%;
+    margin: 0;
+    padding: 6px;
+    font-size: 14px;
+    list-style: none;
+    height: 25px;
+    border-bottom: #E5E5E5 1px solid;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+  }
+
+  button {
+    color: #5E5E5E;
+    width: 100%;
+    height: 22px;
+    margin: 0;
+    padding: 0 15px;
+    font-size: 14px;
+    font-weight: normal;
+    white-space: nowrap;
+    justify-content: flex-start;
+    display: inline-flex;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    position: relative;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    background-color: transparent;
+    outline: 0px;
+    border: 0px;
+    cursor: pointer;
+    user-select: none;
+    vertical-align: middle;
+    appearance: none;
+    text-decoration: none;
+    font-family: Lato, sans-serif;
+    line-height: 1.75;
+    min-width: 64px;
+    transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    text-transform: none;
+    border-radius: 3px;
+    box-shadow: none;
+    height: initial;
+  }
+
+}
+
 .clear-button:hover:not(:disabled) {
   background-color: rgb(230, 234, 235);
   border: 1px solid rgb(91, 92, 92);
@@ -600,6 +772,7 @@ export default {
   background-color: #ffffff;
   display: flex;
   justify-content: center;
+  overflow: hidden;
   /* align-items: center; */
   /*padding: 2rem;*/
 }
@@ -615,26 +788,29 @@ export default {
   -webkit-transition: width 0.5s;
   height: 90%;
   /* background-color: #969FA8; */
-  border-right: #eaedee 1px solid;
+  // border-right: #eaedee 1px solid;
 
   display: flex;
 
 }
 
 .mi-file-body-list {
+  width: 100%;
   transition: width 0.5s;
   -webkit-transition: width 0.5s;
   /* background-color: #969FA8; */
-  border-right: #eaedee 1px solid;
 }
 
 .mi-file-details {
   transition: width 0.5s;
   -webkit-transition: width 0.5s;
   /* background-color: #969FA8; */
-  border-right: #eaedee 1px solid;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 15px;
+  // border-left: #eaedee 1px solid;
+
 }
 
 .mi-file-header {

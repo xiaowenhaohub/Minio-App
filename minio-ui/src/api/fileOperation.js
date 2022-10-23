@@ -21,3 +21,10 @@ export function getFileDetails(fileId) {
     method: 'get'
   })
 }
+
+export function deleteFile(fileId) {
+  return request({
+    url: '/file/delete/' + fileId,
+    method: 'delete'
+  })
+}
