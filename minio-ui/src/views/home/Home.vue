@@ -267,7 +267,7 @@ export default {
       this.loading = true;
       this.showCreateFolderDialog()
       createFolder(this.dirInfo.id, this.newFolderName).then(response => {
-        this.loading = false;
+        this.Refresh(this.dirInfo.id)
       })
     },
 
