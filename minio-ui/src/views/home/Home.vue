@@ -91,7 +91,8 @@
         </div>
       </div>
       <div class="mi-file-body">
-        <div class="mi-file-body-list" style="height: 100%;" :style="{ width: fileBodyWidth }">
+        <div class="mi-file-body-list" style="height: 100%;"
+          :style="{ width: fileBodyWidth, borderRight: openFileDetailsWindows ? '#eaedee 1px solid' : '' }">
           <div class="body-header">
             <div style="display: flex; width: 98%; height: 70%">
               <div class="body-header-left">
@@ -127,10 +128,11 @@
               }" height="100%" :row-style="{ height: '10px' }" @row-click="clickFileRow">
               <el-table-column align="left" min-width="3%">
                 <template slot="header" slot-scope="scope">
-                  <input class="file-check" @click="test(scope.row)" type="checkBox" />
+                  <input class="file-check" v-model="allChecked" @click="changeAllChecked()" type="checkbox" />
                 </template>
                 <template slot-scope="scope">
-                  <input class="file-check" @click.stop="showManyFileDetails($event, scope.row)" type="checkBox" />
+                  <input class="file-check" :value="scope.row.id" v-model="checkedFileList"
+                    @click.stop="showManyFileDetails($event, scope.row)" type="checkbox" />
                 </template>
               </el-table-column>
 
@@ -161,8 +163,7 @@
             </el-table>
           </div>
         </div>
-        <div class="mi-file-details"
-          :style="{ width: fileDetailsWidth, borderLeft: showFileInfo ? '#eaedee 1px solid' : '' }">
+        <div class="mi-file-details" :style="{ width: fileDetailsWidth }">
           <div class="file-details-loading" :style="{ display: isHiddenFileDetailsLoading }"></div>
 
           <div class="mi-file-details" :style="{ width: '100%', height: '100%', display: showFileInfo ? '' : 'none', }">
@@ -197,9 +198,16 @@
                   <div style="width:3px"></div>Rename
                 </button>
               </li>
+              <li :style="{ display: openManyFileDetailsWindows ? '' : 'none' }">
+                <button>
+                  <i class="el-icon-scissors"></i>
+                  <div style="width:3px"></div>Delete
+                </button>
+              </li>
+
             </ul>
 
-            <div class="file-delete" :style="{ display: openManyFileDetailsWindows ? '' : 'none' }">
+            <div class="file-delete" :style="{ display: openManyFileDetailsWindows ? 'none' : '' }">
               <button @click="deleteFile()"><svg style="width:14px;margin-right: 10px;"
                   xmlns="http://www.w3.org/2000/svg" class="min-icon" fill="currentcolor" viewBox="0 0 256 256">
                   <g id="trash-icn" transform="translate(0 0)">
@@ -253,6 +261,7 @@ export default {
   name: "Home",
   data() {
     return {
+      allChecked: false,
       newFolderName: '',
       // fileBodyWidth: '100%',
       createFolderDialog: false,
@@ -264,7 +273,7 @@ export default {
       fileDetailsLoading: false,
       fileDetails: {},
       showFileInfo: false,
-      selectFileList: []
+      checkedFileList: []
     };
   },
   created() {
@@ -291,7 +300,7 @@ export default {
       console.log("Refresh....");
       this.loading = true;
       id = id == null ? this.dirInfo.id : id;
-
+      this.checkedFileList = []
       getFileList(id).then((response) => {
         this.fileList = response.data.fileList;
         this.dirInfo = response.data.dirInfo;
@@ -310,6 +319,24 @@ export default {
      */
     test() {
       console.log("this is test function");
+    },
+
+    /**
+     * 按键全选
+     */
+    changeAllChecked() {
+      if (this.allChecked) {
+        this.checkedFileList = []
+        this.openManyFileDetailsWindows = false
+        this.openFileDetailsWindows = false
+        this.fileDetailsLoading = false
+        this.showFileInfo = false
+      } else {
+        this.fileList.forEach(file => {
+          this.checkedFileList.push(file.id)
+        })
+        this.showManyFileDetails()
+      }
     },
 
     /**
@@ -343,16 +370,29 @@ export default {
      * @param {显示多个文件详情} id 
      */
     showManyFileDetails(event, row) {
-      if (event.target.checked) {
-        this.selectFileList.push(row.id)
-      } else {
+      // if (event.target.checked) {
+      //   this.checkedFileList.push(row.id)
+      // } else {
 
-        this.selectFileList.splice(this.selectFileList.indexOf(row.id), 1)
-      }
-      console.log(this.selectFileList);
+      //   this.checkedFileList.splice(this.checkedFileList.indexOf(row.id), 1)
+      // }
+      // console.log(this.selectFileList);
       this.openManyFileDetailsWindows = true
-      this.showFileDetails = this.showFileDetails ? false : true;
+      this.openFileDetailsWindows = true
+      this.fileDetailsLoading = true
+      this.showFileInfo = true
+
+      console.log(this.checkedFileList)
+      // if (this.checkedFileList.length == 0) {
+      //   this.openManyFileDetailsWindows = false
+      //   this.openFileDetailsWindows = false
+      //   this.fileDetailsLoading = false
+      //   this.showFileInfo = false
+      // }
+
     },
+
+
 
     /**
      * 
@@ -362,13 +402,15 @@ export default {
       console.log('showFileDetails...')
       this.fileDetailsLoading = true
       this.openFileDetailsWindows = true
+      this.openManyFileDetailsWindows = false
       this.showFileInfo = false
-      this.showFileInfo = true
-
+      this.checkedFileList = []
       getFileDetails(row.id).then(response => {
         if (response.code == 200) {
           this.fileDetails = response.data
           this.fileDetailsLoading = false
+          this.showFileInfo = true
+
         }
       })
     },
@@ -423,6 +465,15 @@ export default {
       };
     },
   },
+  watch: {
+    "checkedFileList": function () {
+      if (this.checkedFileList.length == this.fileList.length && this.fileList.length != 0) {
+        this.allChecked = true
+      } else {
+        this.allChecked = false
+      }
+    }
+  }
 };
 </script>
 
