@@ -108,7 +108,7 @@
 
                 <div class="mi-text-back">
                   <a class="mi-file-path" href="/buckets/public/browse">{{
-                  dirInfo.path
+                      dirInfo.path
                   }}</a>
                 </div>
               </div>
@@ -130,7 +130,7 @@
                   <input class="file-check" @click="test(scope.row)" type="checkBox" />
                 </template>
                 <template slot-scope="scope">
-                  <input class="file-check" @click.stop="showFileDetails(scope.row)" type="checkBox" />
+                  <input class="file-check" @click.stop="showManyFileDetails($event, scope.row)" type="checkBox" />
                 </template>
               </el-table-column>
 
@@ -162,13 +162,13 @@
           </div>
         </div>
         <div class="mi-file-details"
-          :style="{width: fileDetailsWidth, borderLeft : showFileInfo ? '#eaedee 1px solid' : ''}">
-          <div class="file-details-loading" :style="{display: isHiddenFileDetailsLoading  }"></div>
+          :style="{ width: fileDetailsWidth, borderLeft: showFileInfo ? '#eaedee 1px solid' : '' }">
+          <div class="file-details-loading" :style="{ display: isHiddenFileDetailsLoading }"></div>
 
-          <div class="mi-file-details" :style="{width: '100%', height: '100%', display: showFileInfo ? '' : 'none',}">
+          <div class="mi-file-details" :style="{ width: '100%', height: '100%', display: showFileInfo ? '' : 'none', }">
             <div style="width:80%;font-size: 14px;display: flex;align-items: center;">
-              <span
-                style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;">{{fileDetails.fileName}}</span>
+              <span style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;">{{ fileDetails.fileName
+              }}</span>
             </div>
             <ul class="file-action">
               <li>Actions:</li>
@@ -199,7 +199,7 @@
               </li>
             </ul>
 
-            <div class="file-delete">
+            <div class="file-delete" :style="{ display: openManyFileDetailsWindows ? '' : 'none' }">
               <button @click="deleteFile()"><svg style="width:14px;margin-right: 10px;"
                   xmlns="http://www.w3.org/2000/svg" class="min-icon" fill="currentcolor" viewBox="0 0 256 256">
                   <g id="trash-icn" transform="translate(0 0)">
@@ -257,12 +257,14 @@ export default {
       // fileBodyWidth: '100%',
       createFolderDialog: false,
       loading: true,
-      showFileDetails: false,
+      openFileDetailsWindows: false,
+      openManyFileDetailsWindows: false,
       dirInfo: {},
       fileList: [],
-      fileDetailsLoding: false,
+      fileDetailsLoading: false,
       fileDetails: {},
-      showFileInfo: false
+      showFileInfo: false,
+      selectFileList: []
     };
   },
   created() {
@@ -275,7 +277,7 @@ export default {
      */
     init() {
       console.log("init.....");
-      this.showFileDetails = false
+      this.openFileDetailsWindows = false
 
       //获取root文件列表
       this.Refresh(-1)
@@ -293,7 +295,7 @@ export default {
       getFileList(id).then((response) => {
         this.fileList = response.data.fileList;
         this.dirInfo = response.data.dirInfo;
-        this.showFileDetails = false
+        this.openFileDetailsWindows = false
         this.loading = false;
         this.showFileInfo = false
       });
@@ -340,8 +342,15 @@ export default {
      * 
      * @param {显示多个文件详情} id 
      */
-    showFileDetails(id) {
-      console.log(id);
+    showManyFileDetails(event, row) {
+      if (event.target.checked) {
+        this.selectFileList.push(row.id)
+      } else {
+
+        this.selectFileList.splice(this.selectFileList.indexOf(row.id), 1)
+      }
+      console.log(this.selectFileList);
+      this.openManyFileDetailsWindows = true
       this.showFileDetails = this.showFileDetails ? false : true;
     },
 
@@ -350,17 +359,16 @@ export default {
      * @param {显示单个文件详情} row 
      */
     showOneFileDetails(row) {
-      console.log('showFileDetails', row)
-      this.fileDetailsLoding = true
-      this.showFileDetails = true
+      console.log('showFileDetails...')
+      this.fileDetailsLoading = true
+      this.openFileDetailsWindows = true
       this.showFileInfo = false
       this.showFileInfo = true
 
       getFileDetails(row.id).then(response => {
-        console.log(response)
         if (response.code == 200) {
           this.fileDetails = response.data
-          this.fileDetailsLoding = false
+          this.fileDetailsLoading = false
         }
       })
     },
@@ -382,16 +390,19 @@ export default {
 
   computed: {
     fileBodyWidth() {
-      return this.showFileDetails ? "85%" : "100%";
+      return this.openFileDetailsWindows ? "85%" : "100%";
     },
     fileDetailsWidth() {
-      return this.showFileDetails ? "15%" : "0%";
+      // let w = window.innerWidth;
+      // console.log("width:", w)
+
+      return this.openFileDetailsWindows ? "300px" : "0";
     },
     hasInputFolderName() {
       return this.newFolderName == '' ? true : false;
     },
     isHiddenFileDetailsLoading() {
-      return this.fileDetailsLoding ? 'block' : 'none';
+      return this.fileDetailsLoading ? 'block' : 'none';
     },
 
     getFileImage() {
@@ -477,6 +488,11 @@ export default {
     display: flex;
     justify-content: left;
     align-items: center;
+  }
+
+  button:hover {
+    color: #000;
+    background-color: transparent;
   }
 
   button {
