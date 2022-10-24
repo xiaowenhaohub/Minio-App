@@ -266,14 +266,9 @@ export default {
       // fileBodyWidth: '100%',
       createFolderDialog: false,
       loading: true,
-<<<<<<<
-      showFileDetails: false,
-      dirInfo: null,
-=======
       openFileDetailsWindows: false,
       openManyFileDetailsWindows: false,
       dirInfo: {},
->>>>>>>
       fileList: [],
       fileDetailsLoading: false,
       fileDetails: {},
