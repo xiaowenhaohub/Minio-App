@@ -12,6 +12,7 @@ sshkey() {
 copy() {
   echo "begin copy......"
   cp -rf ../minio-admin/target/minio-admin.jar ./admin/jar/minio-admin.jar
+  cp -rf ../minio-ui/dist/** ./nginx/html/dist
 }
 
 send() {
@@ -20,7 +21,7 @@ send() {
 }
 
 base(){
-  docker-compose up -d minio-service
+  docker-compose up -d minio-service minio-nginx
 }
 
 modules() {
