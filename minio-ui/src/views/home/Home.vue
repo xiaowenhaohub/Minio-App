@@ -258,7 +258,7 @@
 </template>
 
 <script>
-import { getFileList, createFolder, getFileDetails, deleteFile, deleteFileList, downloadFile, uploadFile } from "@/api/fileOperation";
+import { getFileList, createFolder, getFileDetails, deleteFile, deleteFileList, downloadFile, uploadFile } from "@/api/home";
 // import axios from "axios";
 export default {
   name: "Home",

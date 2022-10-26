@@ -42,4 +42,8 @@
     <select id="querySysFileInfoNum" resultType="java.lang.Integer">
         select count(id) from sys_file_info where parent_dir_id = #{parentDirId}
     </select>
+    <select id="selectFileByName" resultType="com.minio.file.domain.SysFileInfo">
+        select <include refid="all_columns"></include> from sys_file_info
+        where file_name like concat('%',#{fileName},'%');
+    </select>
 </mapper>

@@ -69,5 +69,10 @@ public interface SysFileInfoMapper {
      */
     int updateSysFileInfo(@Param("sysFileInfo") SysFileInfo sysFileInfo);
 
-
+    /**
+     * 根据文件名查询文件
+     * @param fileName
+     * @return
+     */
+    List<SysFileInfo> selectFileByName(@Param("fileName") String fileName);
 }

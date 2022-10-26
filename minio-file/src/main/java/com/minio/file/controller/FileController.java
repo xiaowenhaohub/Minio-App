@@ -80,6 +80,13 @@ public class FileController {
         return AjaxResult.success("查询成功", sysFileService.querySysFileInfoById(fileId));
     }
 
+    @GetMapping("/search/{fileName}")
+    @ApiOperation("根据文件名查询文件")
+    @Log(title = "根据文件名查询文件")
+    public AjaxResult searchFile(@PathVariable String fileName) {
+        return AjaxResult.success("查询成功", sysFileService.querySysFileByName(fileName));
+    }
+
     @DeleteMapping("/delete/{fileId}")
     @ApiOperation("删除文件")
     @Log(title = "删除文件")

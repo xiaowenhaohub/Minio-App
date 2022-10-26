@@ -9,6 +9,7 @@
 
 export default {
   name: 'App',
+
 }
 </script>
 
@@ -26,13 +27,15 @@ body {
 }
 
 
-html,body,#app{
-  overflow:hidden;
+html,
+body,
+#app {
+  overflow: hidden;
   height: 100%;
   font-family: "Lato", sans-serif;
   -webkit-font-smoothing: antialiased;
   background-color: #fff;
- 
+
   /*background:rgba(38, 24, 49,.6);*/
 }
 </style>

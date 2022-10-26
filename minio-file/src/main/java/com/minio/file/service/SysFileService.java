@@ -33,6 +33,13 @@ public interface SysFileService {
     List<SysFileInfoVO> querySysFileList(Long dirId);
 
     /**
+     * 根据文件名称查询文件
+     * @param fileName
+     * @return
+     */
+    List<SysFileInfoVO> querySysFileByName(String fileName);
+
+    /**
      * 查询文件夹详情
      * @param dirId
      * @return

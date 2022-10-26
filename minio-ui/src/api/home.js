@@ -8,6 +8,13 @@ export function getFileList(dirId) {
   })
 }
 
+export function searchFile(fileName) {
+  return request({
+    url: '/file/search/' + fileName,
+    method: 'get'
+  })
+}
+
 export function createFolder(parentDirId, folderName) {
   return request({
     url: '/file/create/' + parentDirId + '/' + folderName,

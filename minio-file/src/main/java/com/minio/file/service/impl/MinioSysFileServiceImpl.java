@@ -109,6 +109,13 @@ public class MinioSysFileServiceImpl implements SysFileService {
     }
 
     @Override
+    public List<SysFileInfoVO> querySysFileByName(String fileName) {
+        System.out.println(fileName);
+        List<SysFileInfo> sysFileInfoList = sysFileInfoMapper.selectFileByName(fileName);
+        return mapperFacade.mapAsList(sysFileInfoList, SysFileInfoVO.class);
+    }
+
+    @Override
     public SysFileInfoVO queryDirInfo(Long dirId) {
 
         SysFileInfo sysFileInfo = sysFileInfoMapper.selectSysFileInfoById(dirId);
