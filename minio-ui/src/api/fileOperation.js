@@ -28,3 +28,31 @@ export function deleteFile(fileId) {
     method: 'delete'
   })
 }
+
+export function deleteFileList(fileIdList) {
+  return request({
+    url: '/file/delete/list',
+    data: fileIdList,
+    method: 'post'
+  })
+}
+
+export function downloadFile(fileId, event) {
+  return request({
+    url: '/file/download/' + fileId,
+    responseType: "blob",
+    method: 'get',
+    onDownloadProgress: event
+  })
+}
+
+export function uploadFile(parentDirId, file) {
+  return request({
+    url: '/file/upload/' + parentDirId,
+    method: 'post',
+    data: file,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}

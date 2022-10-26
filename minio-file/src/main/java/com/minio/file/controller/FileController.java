@@ -87,6 +87,16 @@ public class FileController {
         return AjaxResult.success("删除成功", sysFileService.deleteSysFileInfo(fileId));
     }
 
+    @PostMapping("/delete/list")
+    @ApiOperation("批量删除文件")
+    @Log(title = "批量删除文件")
+    public AjaxResult deleteFileByList(@RequestBody List<Long> fileIdList) {
+        fileIdList.forEach(fileId -> {
+            sysFileService.deleteSysFileInfo(fileId);
+        });
+        return AjaxResult.success("删除成功");
+    }
+
     @GetMapping("/download/{fileId}")
     @ApiOperation("下载文件")
     @Log(title = "下载文件")
@@ -97,6 +107,9 @@ public class FileController {
         try {
             inputStream = sysFileService.getFileInputStream(fileId);
             response.setHeader("Content-Disposition", "attachment;filename=" + sysFileInfoVO.getFileName());
+            response.setHeader("Download-Type", "file");
+            response.setHeader("Access-Control-Expose-Headers", "Content-Disposition" + ", Download-Type" );
+            response.setContentLengthLong(Long.parseLong(sysFileInfoVO.getSize()));
             // 获取输出流
             outputStream = response.getOutputStream();
             IOUtils.copy(inputStream, outputStream);
