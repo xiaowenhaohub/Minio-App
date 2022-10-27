@@ -258,7 +258,8 @@
 </template>
 
 <script>
-import { getFileList, createFolder, getFileDetails, deleteFile, deleteFileList, downloadFile, uploadFile } from "@/api/home";
+import { createFolder, getFileDetails, deleteFile, deleteFileList, downloadFile, uploadFile } from "@/api/home";
+import { mapState, mapActions } from "vuex"
 // import axios from "axios";
 export default {
   name: "Home",
@@ -268,11 +269,11 @@ export default {
       newFolderName: '',
       // fileBodyWidth: '100%',
       createFolderDialog: false,
-      loading: true,
+      // loading: true,
       openFileDetailsWindows: false,
       openManyFileDetailsWindows: false,
-      dirInfo: {},
-      fileList: [],
+      // dirInfo: {},
+      // fileList: [],
       fileDetailsLoading: false,
       fileDetails: {},
       showFileInfo: false,
@@ -284,6 +285,13 @@ export default {
   },
 
   methods: {
+    ...mapActions("file", {
+      getFileList: "getFileList",
+      setLoading: "setLoading",
+      setUploading: "setUploading",
+      pushFileState: "pushFileState",
+      setPercentage: "setPercentage"
+    }),
     /**
      * 初始化
      */
@@ -299,18 +307,22 @@ export default {
     /**
      * 刷新
      */
-    Refresh(id) {
+    async Refresh(id) {
       console.log("Refresh....");
-      this.loading = true;
+      this.setLoading(true);
       id = id == null ? this.dirInfo.id : id;
       this.checkedFileList = []
-      getFileList(id).then((response) => {
-        this.fileList = response.data.fileList;
-        this.dirInfo = response.data.dirInfo;
-        this.openFileDetailsWindows = false
-        this.loading = false;
-        this.showFileInfo = false
-      });
+      await this.getFileList(id)
+      this.openFileDetailsWindows = false
+      this.setLoading(false);
+      this.showFileInfo = false
+      // getFileList(id).then((response) => {
+      //   this.fileList = response.data.fileList;
+      //   this.dirInfo = response.data.dirInfo;
+      //   this.openFileDetailsWindows = false
+      //   this.loading = false;
+      //   this.showFileInfo = false
+      // });
     },
 
 
@@ -338,8 +350,14 @@ export default {
 
       let file = this.$refs.file.files[0]
       formData.append('file', file)
-      uploadFile(this.dirInfo.id, formData).then(res => {
-        console.log("上传成功")
+      this.setUploading(true)
+      uploadFile(this.dirInfo.id, formData, this.showUploadProgress).then(res => {
+        const h = this.$createElement;
+        this.$notify({
+          // title: '标题名称',
+          message: h('i', { style: 'color: teal' }, '上传成功'),
+          position: 'top-left'
+        });
         this.Refresh(this.dirInfo.id)
       })
       console.log(formData)
@@ -355,21 +373,55 @@ export default {
       this.$refs.file.click()
 
     },
+
+    /**
+     * 上传进度
+     * @param {*} event 
+     */
+    showUploadProgress(event) {
+      console.log(event)
+      let has = false;
+      let file = this.$refs.file.files[0]
+      this.fileStateList.forEach((fileState, index) => {
+        if (fileState.fileName == file.name) {
+          has = true;
+          this.setPercentage({ index, percentage: parseInt((event.loaded / event.total) * 100) })
+        }
+      })
+      if (!has) {
+        this.pushFileState({ percentage: parseInt((event.loaded / event.total) * 100), fileName: file.name, state: 'upload' })
+      }
+    },
     /**
      * 下载文件进度
      * @param {} event 
      */
     showDownloadProgress(event) {
-      console.log((event.loaded / event.total) * 100, '%')
+      let has = false;
+
+      this.fileStateList.forEach((fileState, index) => {
+        if (fileState.id == this.fileDetails.id) {
+          has = true;
+          this.setPercentage({ index, percentage: parseInt((event.loaded / event.total) * 100) })
+        }
+      })
+      if (!has) {
+        this.pushFileState({ id: this.fileDetails.id, percentage: parseInt((event.loaded / event.total) * 100), fileName: this.fileDetails.fileName, state: 'download' })
+      }
     },
 
     /**
      * 下载文件
      */
     downLoadFile() {
-
+      this.setUploading(true)
       downloadFile(this.fileDetails.id, this.showDownloadProgress).then(res => {
-        console.log(res)
+        const h = this.$createElement;
+        this.$notify({
+          // title: '标题名称',
+          message: h('i', { style: 'color: teal' }, '下载成功'),
+          position: 'top-left'
+        });
       })
     },
 
@@ -377,9 +429,14 @@ export default {
      * 批量删除
      */
     deleteByList() {
-      this.loading = true
+      this.setLoading(true)
       deleteFileList(this.checkedFileList).then(response => {
-        console.log(response.msg)
+        const h = this.$createElement;
+        this.$notify({
+          // title: '标题名称',
+          message: h('i', { style: 'color: teal' }, '删除成功'),
+          position: 'top-left'
+        });
         this.Refresh(this.dirInfo.id)
       })
     },
@@ -406,7 +463,14 @@ export default {
      * 删除文件
      */
     deleteFile() {
-      deleteFile(this.fileDetails.id)
+      deleteFile(this.fileDetails.id).then(res => {
+        const h = this.$createElement;
+        this.$notify({
+          // title: '标题名称',
+          message: h('i', { style: 'color: teal' }, '删除成功'),
+          position: 'top-left'
+        });
+      })
       this.Refresh(this.dirInfo.id)
     },
 
@@ -421,7 +485,7 @@ export default {
      * 创建文件夹
      */
     createFolder() {
-      this.loading = true;
+      this.setLoading(true);
       this.showCreateFolderDialog()
       createFolder(this.dirInfo.id, this.newFolderName).then(response => {
         this.Refresh(this.dirInfo.id)
@@ -445,7 +509,6 @@ export default {
       // this.fileDetailsLoading = true
       this.showFileInfo = true
 
-      console.log(this.checkedFileList)
       // if (this.checkedFileList.length == 0) {
       //   this.openManyFileDetailsWindows = false
       //   this.openFileDetailsWindows = false
@@ -462,7 +525,6 @@ export default {
      * @param {显示单个文件详情} row 
      */
     showOneFileDetails(row) {
-      console.log('showFileDetails...')
       this.fileDetailsLoading = true
       this.openFileDetailsWindows = true
       this.openManyFileDetailsWindows = false
@@ -484,7 +546,6 @@ export default {
      * @param {文件点击事件} row 
      */
     clickFileRow(row) {
-      console.log(row)
       if (row.dataType == 1) {
         this.Refresh(row.id)
         return
@@ -494,6 +555,8 @@ export default {
   },
 
   computed: {
+    ...mapState("file", { fileList: "fileList", dirInfo: "dirInfo", loading: "loading", fileStateList: "fileStateList" }),
+
     fileBodyWidth() {
       return this.openFileDetailsWindows ? "85%" : "100%";
     },

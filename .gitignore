@@ -14,5 +14,6 @@ minio-admin/src/main/resources/application-dev.yml
 .env.development
 .iml
 log/
+docker/nginx/html/dist/
 
 *.iml

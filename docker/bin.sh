@@ -10,8 +10,9 @@ sshkey() {
 }
 
 copy() {
-  echo "begin copy......"
+  echo "begin copy jar......"
   cp -rf ../minio-admin/target/minio-admin.jar ./admin/jar/minio-admin.jar
+  echo "begin copy dist......"
   cp -rf ../minio-ui/dist/** ./nginx/html/dist
 }
 

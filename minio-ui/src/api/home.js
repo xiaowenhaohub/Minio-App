@@ -53,13 +53,14 @@ export function downloadFile(fileId, event) {
   })
 }
 
-export function uploadFile(parentDirId, file) {
+export function uploadFile(parentDirId, file, event) {
   return request({
     url: '/file/upload/' + parentDirId,
     method: 'post',
     data: file,
     headers: {
       'Content-Type': 'multipart/form-data'
-    }
+    },
+    onUploadProgress: event
   })
 }
