@@ -8,7 +8,7 @@
         maxlength="16" />
     </div>
     <div class="mi-h3">
-      <div class="mi-button">
+      <div class="mi-button" @click="openCodeWindows">
         <i class="el-icon-setting"></i>
       </div>
       <div class="mi-button" style="margin-left: 5px;" @click="showDownloadWindows"
@@ -40,7 +40,11 @@
 
       <div style="width: 100%; height: 100%; overflow-y:scroll">
         <div v-for="(fileState, index) in fileStateList" class="file-state-card">
-          <div style=""><i :class="checkIco(fileState.state)" style="margin-right: 5px;"></i>{{ fileState.fileName }}
+          <div style=""><i :class="checkIco(fileState.state)" style="margin-right: 5px;"></i>
+            <span style="white-space: nowrap; text-overflow: ellipsis; overflow: hidden">
+              {{ fileState.fileName }}
+            </span>
+            <i class="el-icon-close cancel-button" @click="cancelFile(fileState, index)"></i>
           </div>
           <el-progress :percentage="fileState.percentage" :color="customColorMethod"></el-progress>
 
@@ -49,12 +53,27 @@
 
     </div>
 
+    <el-drawer title="我是标题" :visible.sync="showCodeWindows" :with-header="false">
+      <div class="text-body">
+        <div style="width: 90%;height: 90%;" v-highlight>
+          <div class="container">
+            <div ref="ace" class="ace-editor"></div>
+          </div>
+        </div>
+      </div>
+    </el-drawer>
   </div>
 </template>
 
 <script>
 import { mapState, mapActions } from "vuex"
-
+import ace from 'ace-builds'
+import 'ace-builds/webpack-resolver' // 在 webpack 环境中使用必须要导入
+// 根据自己的需求按需引入
+import 'ace-builds/src-noconflict/ext-language_tools'
+import 'ace-builds/src-noconflict/theme-dracula' // 主题
+import 'ace-builds/src-noconflict/mode-html' // 语言模式
+import 'ace-builds/src-noconflict/snippets/html'
 export default {
   name: 'Header',
   components: {
@@ -63,7 +82,9 @@ export default {
 
   data() {
     return {
+      aceEditor: null,
       fileName: '',
+      showCodeWindows: false,
       openDownloadWindows: false,
       customColors: [
         { color: 'rgb(7, 25, 62)', percentage: 99 },
@@ -71,9 +92,30 @@ export default {
       ]
     }
   },
-
+  created() {
+    this.initEditor()
+  },
   methods: {
-    ...mapActions("file", { searchFile: "searchFile", getFileList: "getFileList", setLoading: "setLoading", }),
+    ...mapActions("file", {
+      searchFile: "searchFile",
+      getFileList: "getFileList",
+      setLoading: "setLoading",
+      removeFileStateList: 'removeFileStateList'
+    }),
+    initEditor() {
+      // 初始化
+      this.aceEditor = ace.edit(this.$refs.ace, {
+        maxLines: 20, // 最大行数，超过会自动出现滚动条
+        minLines: 20, // 最小行数，还未到最大行数时，编辑器会自动伸缩大小
+        fontSize: 14, // 编辑器内字体大小
+        theme: 'ace/theme/dracula', // 主题
+        mode: 'ace/mode/html', // 默认设置的语言模式
+        tabSize: 4, // 制表符设置为 4 个空格大小
+      })
+    },
+    openCodeWindows() {
+      this.showCodeWindows = true
+    },
 
     showDownloadWindows() {
       this.openDownloadWindows = this.openDownloadWindows ? false : true
@@ -84,6 +126,18 @@ export default {
       } else {
         return 'rgb(7, 25, 62)';
       }
+    },
+
+    cancelFile(fileState, index) {
+      console.log(fileState)
+      fileState.source.cancel(fileState.state);
+      fileState.percentage = 100
+
+      setTimeout(() => {
+        this.removeFileStateList(index)
+      }, 1000)
+      // delete this.fileStateList[index]
+
     }
   },
 
@@ -129,6 +183,25 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.text-body {
+  width: 100%;
+  height: 100%;
+  // background-color: #073052;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cancel-button:hover {
+  background-color: #E2E2E2;
+}
+
+.cancel-button {
+  position: absolute;
+  right: 10px;
+  border-radius: 50%;
+}
+
 .file-state-card {
   margin: 0 30px;
   padding: 15px 5px;

@@ -27,11 +27,17 @@ const mutations = {
     },
     SET_STATE: (state, { index, percentage }) => {
         state.fileStateList[index].percentage = percentage
+    },
+    DELETE_STATE: (state, index) => {
+        state.fileStateList.splice(index, 1)
     }
 }
 
 const actions = {
 
+    removeFileStateList({ commit }, index) {
+        commit('DELETE_STATE', index)
+    },
     setPercentage({ commit }, { index, percentage }) {
         commit('SET_STATE', { index, percentage })
     },

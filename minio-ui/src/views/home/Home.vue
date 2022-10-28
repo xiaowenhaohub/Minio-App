@@ -260,7 +260,7 @@
 <script>
 import { createFolder, getFileDetails, deleteFile, deleteFileList, downloadFile, uploadFile } from "@/api/home";
 import { mapState, mapActions } from "vuex"
-// import axios from "axios";
+import axios from "axios";
 export default {
   name: "Home",
   data() {
@@ -277,7 +277,8 @@ export default {
       fileDetailsLoading: false,
       fileDetails: {},
       showFileInfo: false,
-      checkedFileList: []
+      checkedFileList: [],
+      source: ''
     };
   },
   created() {
@@ -347,11 +348,11 @@ export default {
     handleFileUpload(event) {
       event.preventDefault();
       let formData = new FormData()
-
+      this.source = axios.CancelToken.source();
       let file = this.$refs.file.files[0]
       formData.append('file', file)
       this.setUploading(true)
-      uploadFile(this.dirInfo.id, formData, this.showUploadProgress).then(res => {
+      uploadFile(this.dirInfo.id, formData, this.source.token, this.showUploadProgress).then(res => {
         const h = this.$createElement;
         this.$notify({
           // title: '标题名称',
@@ -360,7 +361,6 @@ export default {
         });
         this.Refresh(this.dirInfo.id)
       })
-      console.log(formData)
 
       // console.log(formData.get('file'))
       // this.onUpload(formData)
@@ -379,7 +379,6 @@ export default {
      * @param {*} event 
      */
     showUploadProgress(event) {
-      console.log(event)
       let has = false;
       let file = this.$refs.file.files[0]
       this.fileStateList.forEach((fileState, index) => {
@@ -389,7 +388,9 @@ export default {
         }
       })
       if (!has) {
-        this.pushFileState({ percentage: parseInt((event.loaded / event.total) * 100), fileName: file.name, state: 'upload' })
+        console.log(this.source, 'source')
+
+        this.pushFileState({ percentage: parseInt((event.loaded / event.total) * 100), fileName: file.name, state: 'upload', source: this.source })
       }
     },
     /**
@@ -406,7 +407,7 @@ export default {
         }
       })
       if (!has) {
-        this.pushFileState({ id: this.fileDetails.id, percentage: parseInt((event.loaded / event.total) * 100), fileName: this.fileDetails.fileName, state: 'download' })
+        this.pushFileState({ id: this.fileDetails.id, percentage: parseInt((event.loaded / event.total) * 100), fileName: this.fileDetails.fileName, state: 'download', source: this.source })
       }
     },
 
@@ -415,7 +416,9 @@ export default {
      */
     downLoadFile() {
       this.setUploading(true)
-      downloadFile(this.fileDetails.id, this.showDownloadProgress).then(res => {
+      this.source = axios.CancelToken.source();
+
+      downloadFile(this.fileDetails.id, this.source.token, this.showDownloadProgress).then(res => {
         const h = this.$createElement;
         this.$notify({
           // title: '标题名称',

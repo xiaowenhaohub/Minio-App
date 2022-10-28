@@ -44,16 +44,17 @@ export function deleteFileList(fileIdList) {
   })
 }
 
-export function downloadFile(fileId, event) {
+export function downloadFile(fileId, cancelToken, event) {
   return request({
     url: '/file/download/' + fileId,
     responseType: "blob",
     method: 'get',
+    cancelToken,
     onDownloadProgress: event
   })
 }
 
-export function uploadFile(parentDirId, file, event) {
+export function uploadFile(parentDirId, file, cancelToken, event) {
   return request({
     url: '/file/upload/' + parentDirId,
     method: 'post',
@@ -61,6 +62,7 @@ export function uploadFile(parentDirId, file, event) {
     headers: {
       'Content-Type': 'multipart/form-data'
     },
+    cancelToken,
     onUploadProgress: event
   })
 }

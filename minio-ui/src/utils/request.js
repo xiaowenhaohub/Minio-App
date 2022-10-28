@@ -71,6 +71,7 @@ service.interceptors.response.use(
 
     // if the custom code is not 20000, it is judged as an error.
     if (res.code !== 200) {
+
       Message({
         message: res.message || 'Error',
         type: 'error',
@@ -96,6 +97,15 @@ service.interceptors.response.use(
     }
   },
   error => {
+    if (error.message === 'upload' || error.message === 'download') {
+      Message({
+        message: '取消成功',
+        // type: 'error',
+        duration: 5 * 1000
+      })
+      return Promise.reject(error)
+
+    }
     console.log('err' + error) // for debug
     Message({
       message: error.message,
