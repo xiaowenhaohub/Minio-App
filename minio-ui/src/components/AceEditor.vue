@@ -42,6 +42,9 @@ export default {
         minLines: {
             type: Number,
             default: 50
+        },
+        valueChange: {
+            type: Function
         }
     },
     data() {
@@ -63,6 +66,10 @@ export default {
                     this.aceEditor.getSession().setMode('ace/mode/' + newValue);
                 }
             }
+        },
+        aceEditor(newValue) {
+            console.log(newValue, 'newValue')
+
         }
     },
     mounted() {
@@ -87,11 +94,15 @@ export default {
         this.aceEditor.setHighlightActiveLine(true);
         this.aceEditor.getSession().setUseWrapMode(true);
         this.aceEditor.setShowPrintMargin(false);
+        // this.aceEditor.getSession().on('change', this.change);
         this.aceEditor.getSession().on('change', this.change);
+
     },
     methods: {
         change() {
-            this.$emit('input', this.aceEditor.getSession().getValue());
+            this.valueChange(this.aceEditor.getSession().getValue())
+            // console.log(this.aceEditor.getSession().getValue(), 'change')
+            // this.$emit('input', this.aceEditor.getSession().getValue());
         }
     }
 };

@@ -56,7 +56,8 @@
     <el-drawer title="我是标题" :visible.sync="showCodeWindows" :with-header="false" size="40%">
       <div class="text-body">
         <div style="width: 100%;height: 100%; ">
-          <ace-editor ref="ace" themePath="xcode" :value="value" class="ace-editor" mode-path="javascript">
+          <ace-editor ref="ace" themePath="xcode" :valueChange="valueChange" :value="inputText" class="ace-editor"
+            mode-path="javascript">
           </ace-editor>
         </div>
       </div>
@@ -76,7 +77,7 @@ export default {
   data() {
     return {
       fileName: '',
-      value: '',
+      inputText: '',
       showCodeWindows: false,
       openDownloadWindows: false,
       customColors: [
@@ -92,6 +93,9 @@ export default {
       setLoading: "setLoading",
       removeFileStateList: 'removeFileStateList'
     }),
+    valueChange(value) {
+      console.log(value)
+    },
 
     openCodeWindows() {
       this.showCodeWindows = true
