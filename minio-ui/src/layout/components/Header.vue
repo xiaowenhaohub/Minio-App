@@ -90,7 +90,6 @@ export default {
 
 
   mounted() {
-    socket.init(this.socketReceive)
   },
 
   methods: {
@@ -101,10 +100,7 @@ export default {
       removeFileStateList: 'removeFileStateList'
     }),
     getValue(value) {
-      console.log('valueChange:', value)
-
       socket.send(value)
-
       // console.log(value)
     },
 
@@ -114,6 +110,8 @@ export default {
 
     openCodeWindows() {
       this.showCodeWindows = true
+      socket.init(this.socketReceive)
+
     },
 
     showDownloadWindows() {

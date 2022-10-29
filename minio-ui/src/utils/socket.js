@@ -94,7 +94,7 @@ var socket = {
    */
   send: (data, callback = null) => {
     // 开启状态直接发送
-    console.log("发送消息:", data)
+    // console.log("发送消息:", data)
 
     socket.websock.send(data)
 
@@ -128,7 +128,7 @@ var socket = {
    * @param {*} message 接收到的消息
    */
   receive: (response) => {
-    console.log("接收消息:", response.data)
+    // console.log("接收消息:", response.data)
     socket.dataCallback(response.data)
     // 自行扩展其他业务处理...
   },

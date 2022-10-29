@@ -6,6 +6,7 @@
 </template>
   
 <script>
+import $ from 'jquery'
 import ace from 'ace-builds';
 import 'ace-builds/webpack-resolver'; // 在 webpack 环境中使用必须要导入
 import 'ace-builds/src-noconflict/theme-monokai'; // 默认设置的主题
@@ -53,20 +54,24 @@ export default {
     data() {
         return {
             aceEditor: null,
-            windowsHeight: document.documentElement.clientHeight
+            windowsHeight: document.documentElement.clientHeight,
         };
     },
     watch: {
         windowsHeight(newValue) {
             this.aceEditor.setOptions({
                 minLines: document.getElementsByClassName('ace-container')[0].clientHeight / 20
+
             });
+
             // this.aceEditor.getSession().setMinLines(document.getElementsByClassName('ace-container')[0].clientHeight / 20)
         },
         value: {
             handler(newValue) {
                 this.aceEditor.getSession().setValue(newValue);
-
+                // setTimeout(() => {
+                //     this.aceEditor.getSession().setValue("test")
+                // }, 2000)
                 // if (newValue === '' || newValue) {
                 //     this.aceEditor.setValue(newValue);
                 // }
@@ -83,6 +88,37 @@ export default {
         }
     },
     mounted() {
+        // document.getElementsByClassName('ace_text-input')[0].val = 'dddddfaefefa'
+        // console.log(document.getElementsByClassName('ace_text-input')[0])
+        // $('#code').bind('input propertychange', 'textarea', this.change);
+
+        // $('#code').delegate('.ace_text-input', 'propertychange input', function () {
+        //     console.log("========")
+        // })
+
+
+
+
+        let that = this
+        $(document).ready(function () {
+            $("#code").on({
+                copy: function () {
+                    // alert('复制');
+                },
+                paste: function () {
+                    // console.log("paste")
+                    that.change()
+
+                },
+                cut: function () {
+                    alert('剪切');
+                }
+            });
+        });
+        // $('#code').keydown(this.change)
+        // $('#code').keypress(this.change)
+        $('#code').keyup(this.change);
+
         window.onresize = () => {
             this.windowsHeight = document.documentElement.clientHeight;
         }
@@ -110,16 +146,14 @@ export default {
         this.aceEditor.getSession().setUseWorker(false);
         // this.aceEditor.getSession().on('change', this.change);
         this.aceEditor.setHighlightActiveLine(false);
-        this.aceEditor.getSession().on('change', this.change);
+        // this.aceEditor.getSession().on('change', this.change);
 
     },
     methods: {
         change() {
-            console.log(this.aceEditor.getSession().getValue(), "value")
-            let value = this.aceEditor.getSession().getValue()
-            if (this.value != value) {
-                this.getValue(this.aceEditor.getSession().getValue())
-            }
+            // console.log('change', this.aceEditor.getSession().getValue())
+            this.getValue(this.aceEditor.getSession().getValue())
+
             // console.log(this.aceEditor.getSession().getValue(), 'change')
             // this.$emit('input', this.aceEditor.getSession().getValue());
         }
