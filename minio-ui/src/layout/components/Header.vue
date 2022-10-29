@@ -56,7 +56,7 @@
     <el-drawer title="我是标题" :visible.sync="showCodeWindows" :with-header="false" size="40%">
       <div class="text-body">
         <div style="width: 90%;height: 90%; ">
-          <ace-editor ref="ace" themePath="dracula" :valueChange="valueChange" :value="inputText" class="ace-editor"
+          <ace-editor ref="ace" themePath="dracula" :getValue="getValue" :value="inputText" class="ace-editor"
             mode-path="javascript">
           </ace-editor>
         </div>
@@ -67,6 +67,7 @@
 
 <script>
 import AceEditor from '../../components/AceEditor.vue'
+import { socket } from '../../utils/socket'
 import { mapState, mapActions } from "vuex"
 export default {
   name: 'Header',
@@ -86,6 +87,12 @@ export default {
       ]
     }
   },
+
+
+  mounted() {
+    socket.init(this.socketReceive)
+  },
+
   methods: {
     ...mapActions("file", {
       searchFile: "searchFile",
@@ -93,8 +100,16 @@ export default {
       setLoading: "setLoading",
       removeFileStateList: 'removeFileStateList'
     }),
-    valueChange(value) {
+    getValue(value) {
+      console.log('valueChange:', value)
+
+      socket.send(value)
+
       // console.log(value)
+    },
+
+    socketReceive(message) {
+      this.inputText = message
     },
 
     openCodeWindows() {
@@ -113,7 +128,7 @@ export default {
     },
 
     cancelFile(fileState, index) {
-      console.log(fileState)
+      // console.log(fileState)
       fileState.source.cancel(fileState.state);
       fileState.percentage = 100
 

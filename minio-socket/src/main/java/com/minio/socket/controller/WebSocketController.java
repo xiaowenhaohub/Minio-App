@@ -1,71 +1,86 @@
-package com.vip.file.controller;
+package com.minio.socket.controller;
 
-import cn.hutool.json.JSONUtil;
 import cn.hutool.log.Log;
-import cn.hutool.log.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.minio.common.exception.ServiceException;
+import com.minio.common.utils.uuid.IdUtils;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
+import org.slf4j.LoggerFactory;
 import javax.websocket.*;
-import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 
-@ServerEndpoint("/chat")
-@Component
-public class WebSocketEndpoint {
+@ServerEndpoint("/socket")
+@Controller
+public class WebSocketController {
 
-    static Log log = LogFactory.get(WebSocketEndpoint.class);
-    private static Map<String, Session> sessionMap = new ConcurrentHashMap<>();
-    private String username;
+    private static final Logger log = LoggerFactory.getLogger(WebSocketController.class);
+    private static final Map<String, Session> sessionMap = new ConcurrentHashMap<>();
+    private String authentication;
+    private volatile static String historyMessage = "";
 
     @OnOpen
     public void onOpen(Session session,  EndpointConfig config){
-        this.username = String.valueOf(sessionMap.size() + 1);
-        log.info("用户连接:"+username);
-        if(!sessionMap.containsKey(username)){
-            sessionMap.put(username, session);
+        this.authentication = IdUtils.fastSimpleUUID();
+        log.info("用户连接:"+authentication);
+        if(!sessionMap.containsKey(authentication)){
+            sessionMap.put(authentication, session);
         }
+        sendOneMessage(authentication, historyMessage);
     }
 
     @OnMessage
     public void onMessage(String message) throws IOException {
-        log.info("发送消息: {}", message);
-        sendAllMessage(message);
+        log.info(authentication + "消息: {}", message);
+        historyMessage = message;
+        sendAllMessage(historyMessage);
     }
 
     @OnClose
     public void onClose() {
-        sessionMap.remove(username);
-        log.info("用户"+username+"断开连接");
+        sessionMap.remove(authentication);
+        log.info("用户:"+authentication+"断开连接");
 
     }
 
     @OnError
     public void onError(Throwable throwable) {
-        sessionMap.remove(username);
-        log.info("用户"+username+"断开连接");
-        System.out.println(throwable);
+        sessionMap.remove(authentication);
+        log.info("用户:"+authentication+"断开连接");
         log.info("发生错误");
     }
 
     public void sendAllMessage(String message) throws IOException {
-        for (Object key : sessionMap.keySet()) {
-            sessionMap.get(key).getBasicRemote().sendText(message);
-        }
+//        for (Object key : sessionMap.keySet()) {
+//            sessionMap.get(key).getBasicRemote().sendText(message);
+//        }
+
+
+        sessionMap.forEach((key, session) -> {
+            if (!key.equals(authentication)) {
+                try {
+                    session.getBasicRemote().sendText(message);
+                } catch (IOException e) {
+                    throw new ServiceException("发送消息失败");
+                }
+            }
+        });
 
     }
 
-    public void sendOneMessage(String toName, String message) throws IOException {
-        Session session = sessionMap.get(toName);
+    public void sendOneMessage(String toAuthentication, String message)  {
+        Session session = sessionMap.get(toAuthentication);
 
-        if (sessionMap.containsKey(toName)) {
-            session.getBasicRemote().sendText(message);
+        if (sessionMap.containsKey(toAuthentication)) {
+            try {
+                session.getBasicRemote().sendText(message);
+            } catch (IOException e) {
+                throw new ServiceException("发送消息失败");
+            }
         }
     }
 }

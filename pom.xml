@@ -15,6 +15,7 @@
         <module>minio-framework</module>
         <module>minio-file</module>
         <module>minio-admin</module>
+        <module>minio-socket</module>
     </modules>
     <!-- 依赖版本管理 -->
     <properties>

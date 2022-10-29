@@ -388,7 +388,7 @@ export default {
         }
       })
       if (!has) {
-        console.log(this.source, 'source')
+        // console.log(this.source, 'source')
 
         this.pushFileState({ percentage: parseInt((event.loaded / event.total) * 100), fileName: file.name, state: 'upload', source: this.source })
       }

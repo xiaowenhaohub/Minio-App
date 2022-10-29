@@ -23,6 +23,12 @@
             <artifactId>minio-file</artifactId>
             <version>1.0.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.minio</groupId>
+            <artifactId>minio-socket</artifactId>
+            <version>1.0.0</version>
+        </dependency>
         <!--   aspect     -->
         <dependency>
             <groupId>org.aspectj</groupId>

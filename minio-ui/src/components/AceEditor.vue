@@ -43,7 +43,10 @@ export default {
             type: Number,
             default: 50
         },
-        valueChange: {
+        setValue: {
+            type: Function
+        },
+        getValue: {
             type: Function
         }
     },
@@ -62,20 +65,20 @@ export default {
         },
         value: {
             handler(newValue) {
-                if (newValue === '' || newValue) {
-                    this.aceEditor.setValue(newValue);
-                }
+                this.aceEditor.getSession().setValue(newValue);
+
+                // if (newValue === '' || newValue) {
+                //     this.aceEditor.setValue(newValue);
+                // }
             }
         },
         modePath: {
             handler(newValue) {
-                if (newValue) {
-                    this.aceEditor.getSession().setMode('ace/mode/' + newValue);
-                }
+                this.aceEditor.getSession().setMode('ace/mode/' + newValue);
             }
         },
         aceEditor(newValue) {
-            console.log(newValue, 'newValue')
+            // console.log(newValue, 'newValue')
 
         }
     },
@@ -112,7 +115,11 @@ export default {
     },
     methods: {
         change() {
-            this.valueChange(this.aceEditor.getSession().getValue())
+            console.log(this.aceEditor.getSession().getValue(), "value")
+            let value = this.aceEditor.getSession().getValue()
+            if (this.value != value) {
+                this.getValue(this.aceEditor.getSession().getValue())
+            }
             // console.log(this.aceEditor.getSession().getValue(), 'change')
             // this.$emit('input', this.aceEditor.getSession().getValue());
         }
