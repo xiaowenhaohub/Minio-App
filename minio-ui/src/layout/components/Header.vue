@@ -55,8 +55,8 @@
 
     <el-drawer title="我是标题" :visible.sync="showCodeWindows" :with-header="false" size="40%">
       <div class="text-body">
-        <div style="width: 100%;height: 100%; ">
-          <ace-editor ref="ace" themePath="xcode" :valueChange="valueChange" :value="inputText" class="ace-editor"
+        <div style="width: 90%;height: 90%; ">
+          <ace-editor ref="ace" themePath="dracula" :valueChange="valueChange" :value="inputText" class="ace-editor"
             mode-path="javascript">
           </ace-editor>
         </div>
@@ -94,7 +94,7 @@ export default {
       removeFileStateList: 'removeFileStateList'
     }),
     valueChange(value) {
-      console.log(value)
+      // console.log(value)
     },
 
     openCodeWindows() {

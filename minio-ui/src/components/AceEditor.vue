@@ -1,5 +1,6 @@
 <template>
     <div class="ace-container">
+        <d class="ace-header"></d>
         <!-- 官方文档中使用 id，这里禁止使用，在后期打包后容易出现问题，使用 ref 或者 DOM 就行 -->
         <div id="code" ref="ace" class="ace-editor"></div>
     </div>
@@ -9,7 +10,7 @@
 import ace from 'ace-builds';
 import 'ace-builds/webpack-resolver'; // 在 webpack 环境中使用必须要导入
 import 'ace-builds/src-noconflict/theme-monokai'; // 默认设置的主题
-import 'ace-builds/src-noconflict/theme-github';
+import 'ace-builds/src-noconflict/theme-dracula';
 import 'ace-builds/src-noconflict/theme-xcode';
 import 'ace-builds/src-noconflict/mode-javascript'; // 默认设置的语言模式
 import 'ace-builds/src-min-noconflict/mode-python'; // python
@@ -73,7 +74,8 @@ export default {
         }
     },
     mounted() {
-        let h = document.documentElement.clientHeight / 20
+        console.log(document.getElementsByClassName('ace-container')[0].clientHeight)
+        let h = document.getElementsByClassName('ace-container')[0].clientHeight / 20
         this.aceEditor = ace.edit(this.$refs.ace, {
             value: this.value,
             maxLines: this.maxLines, // 最大行数，超过会自动出现滚动条
@@ -94,7 +96,9 @@ export default {
         this.aceEditor.setHighlightActiveLine(true);
         this.aceEditor.getSession().setUseWrapMode(true);
         this.aceEditor.setShowPrintMargin(false);
+        this.aceEditor.getSession().setUseWorker(false);
         // this.aceEditor.getSession().on('change', this.change);
+        this.aceEditor.setHighlightActiveLine(false);
         this.aceEditor.getSession().on('change', this.change);
 
     },
@@ -110,13 +114,22 @@ export default {
 </script>
 <style lang='scss' scoped>
 .ace-container {
-    position: relative;
+    // position: relative;
     width: 100%;
     height: 100%;
+    box-shadow: 0 4px 30px rgb(0 0 0 / 50%);
+    border-radius: 6px;
+    overflow-y: scroll;
+    // overflow: hidden;
 
     .ace-editor {
         width: 100%;
         height: 100%;
+    }
+
+    .ace-header {
+        width: 100%;
+        height: 20px;
     }
 
     .bookmarklet {
