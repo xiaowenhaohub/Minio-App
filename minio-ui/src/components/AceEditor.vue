@@ -1,6 +1,5 @@
 <template>
     <div class="ace-container">
-        <d class="ace-header"></d>
         <!-- 官方文档中使用 id，这里禁止使用，在后期打包后容易出现问题，使用 ref 或者 DOM 就行 -->
         <div id="code" ref="ace" class="ace-editor"></div>
     </div>
@@ -50,10 +49,17 @@ export default {
     },
     data() {
         return {
-            aceEditor: null
+            aceEditor: null,
+            windowsHeight: document.documentElement.clientHeight
         };
     },
     watch: {
+        windowsHeight(newValue) {
+            this.aceEditor.setOptions({
+                minLines: document.getElementsByClassName('ace-container')[0].clientHeight / 20
+            });
+            // this.aceEditor.getSession().setMinLines(document.getElementsByClassName('ace-container')[0].clientHeight / 20)
+        },
         value: {
             handler(newValue) {
                 if (newValue === '' || newValue) {
@@ -74,12 +80,14 @@ export default {
         }
     },
     mounted() {
-        console.log(document.getElementsByClassName('ace-container')[0].clientHeight)
-        let h = document.getElementsByClassName('ace-container')[0].clientHeight / 20
+        window.onresize = () => {
+            this.windowsHeight = document.documentElement.clientHeight;
+        }
+
         this.aceEditor = ace.edit(this.$refs.ace, {
             value: this.value,
             maxLines: this.maxLines, // 最大行数，超过会自动出现滚动条
-            minLines: h, // 最小行数，还未到最大行数时，编辑器会自动伸缩大小
+            minLines: document.getElementsByClassName('ace-container')[0].clientHeight / 20, // 最小行数，还未到最大行数时，编辑器会自动伸缩大小
             // minLines: this.minLines, // 最小行数，还未到最大行数时，编辑器会自动伸缩大小
             fontSize: 14, // 编辑器内字体大小
             theme: 'ace/theme/' + this.themePath, // 默认设置的主题
@@ -89,8 +97,8 @@ export default {
         // 激活自动提示
         this.aceEditor.setOptions({
             enableSnippets: true,
-            enableLiveAutocompletion: true,
-            enableBasicAutocompletion: true
+            // enableLiveAutocompletion: true,
+            // enableBasicAutocompletion: true
         });
         document.getElementById("code").style.lineHeight = "20px"
         this.aceEditor.setHighlightActiveLine(true);
@@ -122,15 +130,21 @@ export default {
     overflow-y: scroll;
     // overflow: hidden;
 
-    .ace-editor {
-        width: 100%;
-        height: 100%;
-    }
-
     .ace-header {
         width: 100%;
         height: 20px;
+        font-size: 14px;
+        margin: 0;
+        overflow: hidden;
     }
+
+    .ace-editor {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+    }
+
+
 
     .bookmarklet {
         position: absolute;
