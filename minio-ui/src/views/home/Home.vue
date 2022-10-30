@@ -399,7 +399,8 @@ export default {
      */
     showDownloadProgress(event) {
       let has = false;
-
+      // console.log('网速', navigator.connection.downlink, 'MB/s')
+      console.log(event)
       this.fileStateList.forEach((fileState, index) => {
         if (fileState.id == this.fileDetails.id) {
           has = true;

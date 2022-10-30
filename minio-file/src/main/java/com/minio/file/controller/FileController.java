@@ -73,6 +73,11 @@ public class FileController {
         return AjaxResult.success("创建成功", sysFileService.createDir(parentDirId, dirName));
     }
 
+    /**
+     * 使用文件Id查询文件详情
+     * @param fileId
+     * @return
+     */
     @GetMapping("/query/{fileId}")
     @ApiOperation("查询文件详情")
     @Log(title = "查询文件详情")
@@ -80,6 +85,11 @@ public class FileController {
         return AjaxResult.success("查询成功", sysFileService.querySysFileInfoById(fileId));
     }
 
+    /**
+     * 使用文件名查询文件详情
+     * @param fileName
+     * @return
+     */
     @GetMapping("/search/{fileName}")
     @ApiOperation("根据文件名查询文件")
     @Log(title = "根据文件名查询文件")
@@ -136,6 +146,13 @@ public class FileController {
         }
     }
 
+    /**
+     *  图片/PDF查看
+     *
+     * @param fileId
+     * @return
+     * @throws IOException
+     */
     @GetMapping(value = "/view/{fileId}", produces = MediaType.IMAGE_PNG_VALUE)
     @ApiOperation("图片/PDF查看")
     @Log(title = "图片/PDF查看")
