@@ -25,8 +25,9 @@ const mutations = {
     PUSH_FILE: (state, fileState) => {
         state.fileStateList.push(fileState)
     },
-    SET_STATE: (state, { index, percentage }) => {
+    SET_STATE: (state, { index, percentage, nowSize }) => {
         state.fileStateList[index].percentage = percentage
+        state.fileStateList[index].nowSize = nowSize
     },
     DELETE_STATE: (state, index) => {
         state.fileStateList.splice(index, 1)
@@ -38,8 +39,8 @@ const actions = {
     removeFileStateList({ commit }, index) {
         commit('DELETE_STATE', index)
     },
-    setPercentage({ commit }, { index, percentage }) {
-        commit('SET_STATE', { index, percentage })
+    setPercentage({ commit }, { index, percentage, nowSize }) {
+        commit('SET_STATE', { index, percentage, nowSize })
     },
 
     pushFileState({ commit }, fileState) {

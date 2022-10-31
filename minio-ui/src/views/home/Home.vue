@@ -260,6 +260,7 @@
 <script>
 import { createFolder, getFileDetails, deleteFile, deleteFileList, downloadFile, uploadFile } from "@/api/home";
 import { mapState, mapActions } from "vuex"
+import { changeSize } from '@/utils/fileutils'
 import axios from "axios";
 export default {
   name: "Home",
@@ -400,15 +401,20 @@ export default {
     showDownloadProgress(event) {
       let has = false;
       // console.log('网速', navigator.connection.downlink, 'MB/s')
-      console.log(event)
+      // console.log(event)
       this.fileStateList.forEach((fileState, index) => {
         if (fileState.id == this.fileDetails.id) {
           has = true;
-          this.setPercentage({ index, percentage: parseInt((event.loaded / event.total) * 100) })
+          // setTimeout(() => {
+          //   console.log(changeSize(event.loaded - fileState.nowSize) + '/s')
+
+          // }, 1000)
+
+          this.setPercentage({ index, percentage: parseInt((event.loaded / event.total) * 100), nowSize: event.loaded })
         }
       })
       if (!has) {
-        this.pushFileState({ id: this.fileDetails.id, percentage: parseInt((event.loaded / event.total) * 100), fileName: this.fileDetails.fileName, state: 'download', source: this.source })
+        this.pushFileState({ id: this.fileDetails.id, percentage: parseInt((event.loaded / event.total) * 100), fileName: this.fileDetails.fileName, state: 'download', source: this.source, nowSize: event.loaded })
       }
     },
 
