@@ -65,7 +65,7 @@
               </g>
             </svg>
           </button>
-          <input type="file" ref="file" style="display: none;" v-on:change="handleFileUpload($event)"></input>
+          <input type="file" ref="file" style="display: none;" v-on:change="handleFileUpload($event)" />
           <!-- <el-dropdown trigger="click">
             
             <el-dropdown-menu slot="dropdown">
@@ -99,7 +99,7 @@
           <div class="body-header">
             <div style="display: flex; width: 98%; height: 70%">
               <div class="body-header-left">
-                <button class="mi-button-back" @click="backParentDir()">
+                <button class="mi-button-back" @click="backParentDir()" :disabled="dirInfo.id == -1 ? true : false">
                   <svg style="width: 16px; min-width: 16px" xmlns="http://www.w3.org/2000/svg" class="min-icon"
                     fill="currentcolor" viewBox="0 0 256 256">
                     <g id="noun_chevron_2320228" transform="translate(5.595 10) rotate(180)">
@@ -250,7 +250,8 @@
         </div>
         <div style="flex: 1;display: flex;width: 100%;justify-content: right;align-items: center;padding-right: 20%;">
           <button class="clear-button mi-button" @click="showCreateFolderDialog()">取消</button>
-          <button class="mi-button confirm-button" @click="createFolder()" :disabled="hasInputFolderName">确定</button>
+          <button class="mi-button confirm-button" @click="createFolder()"
+            :disabled="newFolderName == '' ? true : false">确定</button>
         </div>
       </div>
     </el-dialog>
@@ -273,7 +274,7 @@ export default {
       // loading: true,
       openFileDetailsWindows: false,
       openManyFileDetailsWindows: false,
-      // dirInfo: {},
+      dirInfoList: [],
       // fileList: [],
       fileDetailsLoading: false,
       fileDetails: {},
@@ -292,7 +293,9 @@ export default {
       setLoading: "setLoading",
       setUploading: "setUploading",
       pushFileState: "pushFileState",
-      setPercentage: "setPercentage"
+      removeFileStateList: 'removeFileStateList',
+      setPercentage: "setPercentage",
+      setOpenDownloadWindows: 'setOpenDownloadWindows'
     }),
     /**
      * 初始化
@@ -350,6 +353,8 @@ export default {
       event.preventDefault();
       let formData = new FormData()
       this.source = axios.CancelToken.source();
+      this.setOpenDownloadWindows(true)
+
       let file = this.$refs.file.files[0]
       formData.append('file', file)
       this.setUploading(true)
@@ -382,7 +387,14 @@ export default {
     showUploadProgress(event) {
       let has = false;
       let file = this.$refs.file.files[0]
+
       this.fileStateList.forEach((fileState, index) => {
+        if (parseInt((event.loaded / event.total) * 100) == 100) {
+          setTimeout(() => {
+            this.removeFileStateList(index)
+            this.setOpenDownloadWindows(false)
+          }, 500)
+        }
         if (fileState.fileName == file.name) {
           has = true;
           this.setPercentage({ index, percentage: parseInt((event.loaded / event.total) * 100) })
@@ -405,6 +417,12 @@ export default {
       this.fileStateList.forEach((fileState, index) => {
         if (fileState.id == this.fileDetails.id) {
           has = true;
+          if (parseInt((event.loaded / event.total) * 100) == 100) {
+            setTimeout(() => {
+              this.removeFileStateList(index)
+              this.setOpenDownloadWindows(false)
+            }, 500)
+          }
           // setTimeout(() => {
           //   console.log(changeSize(event.loaded - fileState.nowSize) + '/s')
 
@@ -424,8 +442,10 @@ export default {
     downLoadFile() {
       this.setUploading(true)
       this.source = axios.CancelToken.source();
+      this.setOpenDownloadWindows(true)
 
       downloadFile(this.fileDetails.id, this.source.token, this.showDownloadProgress).then(res => {
+
         const h = this.$createElement;
         this.$notify({
           // title: '标题名称',
@@ -880,6 +900,13 @@ export default {
 
 .mi-button-back:hover {
   background-color: rgba(0, 0, 0, 0.04);
+}
+
+.mi-button-back:disabled {
+  cursor: not-allowed;
+  background-color: rgb(231, 234, 235);
+  border: 1px solid rgb(231, 234, 235);
+  color: rgb(91, 92, 92);
 }
 
 .mi-button-back {

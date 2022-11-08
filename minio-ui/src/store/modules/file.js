@@ -6,7 +6,8 @@ const state = {
     dirInfo: {},
     loading: false,
     uploading: false,
-    fileStateList: []
+    fileStateList: [],
+    openDownloadWindows: false
 }
 
 const mutations = {
@@ -31,6 +32,9 @@ const mutations = {
     },
     DELETE_STATE: (state, index) => {
         state.fileStateList.splice(index, 1)
+    },
+    SET_WINDOWS: (state, showState) => {
+        state.openDownloadWindows = showState
     }
 }
 
@@ -41,6 +45,10 @@ const actions = {
     },
     setPercentage({ commit }, { index, percentage, nowSize }) {
         commit('SET_STATE', { index, percentage, nowSize })
+    },
+
+    setOpenDownloadWindows({ commit }, showState) {
+        commit('SET_WINDOWS', showState)
     },
 
     pushFileState({ commit }, fileState) {

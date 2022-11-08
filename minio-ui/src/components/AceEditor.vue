@@ -9,9 +9,9 @@
 import $ from 'jquery'
 import ace from 'ace-builds';
 import 'ace-builds/webpack-resolver'; // 在 webpack 环境中使用必须要导入
-import 'ace-builds/src-noconflict/theme-monokai'; // 默认设置的主题
+import 'ace-builds/src-noconflict/theme-github'; // 默认设置的主题
 import 'ace-builds/src-noconflict/theme-dracula';
-import 'ace-builds/src-noconflict/theme-xcode';
+import 'ace-builds/src-noconflict/theme-crimson_editor';
 import 'ace-builds/src-noconflict/mode-javascript'; // 默认设置的语言模式
 import 'ace-builds/src-min-noconflict/mode-python'; // python
 import 'ace-builds/src-min-noconflict/mode-batchfile'; // bash

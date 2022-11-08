@@ -55,8 +55,8 @@
 
     <el-drawer title="我是标题" :visible.sync="showCodeWindows" :with-header="false" size="40%">
       <div class="text-body">
-        <div style="width: 90%;height: 90%; ">
-          <ace-editor ref="ace" themePath="dracula" :getValue="getValue" :value="inputText" class="ace-editor"
+        <div style="width: 100%;height: 100%; ">
+          <ace-editor ref="ace" themePath="github" :getValue="getValue" :value="inputText" class="ace-editor"
             mode-path="javascript">
           </ace-editor>
         </div>
@@ -80,7 +80,7 @@ export default {
       fileName: '',
       inputText: '',
       showCodeWindows: false,
-      openDownloadWindows: false,
+      // openDownloadWindows: false,
       customColors: [
         { color: 'rgb(7, 25, 62)', percentage: 99 },
         { color: 'rgb(76, 203, 146)', percentage: 100 }
@@ -97,8 +97,10 @@ export default {
       searchFile: "searchFile",
       getFileList: "getFileList",
       setLoading: "setLoading",
-      removeFileStateList: 'removeFileStateList'
+      removeFileStateList: 'removeFileStateList',
+      setOpenDownloadWindows: 'setOpenDownloadWindows'
     }),
+
     getValue(value) {
       socket.send(value)
       // console.log(value)
@@ -115,7 +117,7 @@ export default {
     },
 
     showDownloadWindows() {
-      this.openDownloadWindows = this.openDownloadWindows ? false : true
+      this.setOpenDownloadWindows(this.openDownloadWindows ? false : true)
     },
     customColorMethod(percentage) {
       if (percentage == 100) {
@@ -143,7 +145,8 @@ export default {
       fileList: "fileList",
       dirInfo: "dirInfo",
       uploading: "uploading",
-      fileStateList: "fileStateList"
+      fileStateList: "fileStateList",
+      openDownloadWindows: "openDownloadWindows"
     }),
 
     checkIco() {
@@ -168,9 +171,9 @@ export default {
 
     },
     fileStateList(newList, oldList) {
-      // console.log(newList, 'newList')
+      // console.log(this.fileStateList, 'newList')
       // console.log(oldList, 'oldList')
-      this.openDownloadWindows = true
+      // this.setOpenDownloadWindows()
     }
   }
 
