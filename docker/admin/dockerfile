@@ -9,6 +9,6 @@ RUN mkdir -p /home/minio
 # 指定路径
 WORKDIR /home/minio
 # 复制jar文件到路径
-COPY ./jar/minio-admin.jar /home/minio/minio-admin.jar
+# COPY ./jar/minio-admin.jar /home/minio/minio-admin.jar
 # 启动认证服务
 ENTRYPOINT ["java","-jar","minio-admin.jar"]

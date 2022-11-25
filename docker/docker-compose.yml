@@ -57,5 +57,7 @@ services:
     build:
       context: ./admin
       dockerfile: dockerfile
+    volumes:
+      - ./admin/jar:/home/minio/
     ports:
       - "9999:9999"
